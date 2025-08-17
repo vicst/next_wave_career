@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS questions (
   id SERIAL PRIMARY KEY,
   question_text_en TEXT NOT NULL,
   question_text_es TEXT NOT NULL,
+  question_text_ro TEXT NOT NULL, -- Added Romanian translation column
   riasec_type VARCHAR(1) NOT NULL CHECK (riasec_type IN ('R', 'I', 'A', 'S', 'E', 'C')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -12,8 +13,10 @@ CREATE TABLE IF NOT EXISTS jobs_traditional (
   id SERIAL PRIMARY KEY,
   job_title_en VARCHAR(255) NOT NULL,
   job_title_es VARCHAR(255) NOT NULL,
+  job_title_ro VARCHAR(255) NOT NULL, -- Added Romanian job title column
   description_en TEXT,
   description_es TEXT,
+  description_ro TEXT, -- Added Romanian description column
   riasec_code VARCHAR(3) NOT NULL,
   salary_range VARCHAR(100),
   education_level VARCHAR(100),
@@ -26,8 +29,10 @@ CREATE TABLE IF NOT EXISTS jobs_future (
   id SERIAL PRIMARY KEY,
   job_title_en VARCHAR(255) NOT NULL,
   job_title_es VARCHAR(255) NOT NULL,
+  job_title_ro VARCHAR(255) NOT NULL, -- Added Romanian job title column
   description_en TEXT,
   description_es TEXT,
+  description_ro TEXT, -- Added Romanian description column
   riasec_code VARCHAR(3) NOT NULL,
   ai_impact_level VARCHAR(20) CHECK (ai_impact_level IN ('Low', 'Medium', 'High')),
   automation_risk VARCHAR(20) CHECK (automation_risk IN ('Low', 'Medium', 'High')),
@@ -42,6 +47,7 @@ CREATE TABLE IF NOT EXISTS caen_codes (
   code VARCHAR(10) NOT NULL UNIQUE,
   description_en TEXT NOT NULL,
   description_es TEXT NOT NULL,
+  description_ro TEXT NOT NULL, -- Added Romanian description column
   sector VARCHAR(100),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -51,6 +57,7 @@ CREATE TABLE IF NOT EXISTS skills_future (
   id SERIAL PRIMARY KEY,
   skill_name_en VARCHAR(255) NOT NULL,
   skill_name_es VARCHAR(255) NOT NULL,
+  skill_name_ro VARCHAR(255) NOT NULL, -- Added Romanian skill name column
   category VARCHAR(100),
   importance_level INTEGER CHECK (importance_level BETWEEN 1 AND 5),
   growth_trend VARCHAR(20) CHECK (growth_trend IN ('Declining', 'Stable', 'Growing', 'High Growth')),
@@ -68,6 +75,7 @@ CREATE TABLE IF NOT EXISTS companies (
   website VARCHAR(255),
   description_en TEXT,
   description_es TEXT,
+  description_ro TEXT, -- Added Romanian description column
   hiring_trends TEXT[],
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
