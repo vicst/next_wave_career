@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
-type Language = "en" | "es"
+type Language = "en" | "es" | "ro"
 
 interface LanguageContextType {
   language: Language
@@ -234,6 +234,116 @@ const translations = {
     "common.free": "Gratuito",
     "common.premium": "Premium",
   },
+  ro: {
+    // Navigation
+    "nav.home": "Acasă",
+    "nav.about": "Despre",
+    "nav.pricing": "Prețuri",
+    "nav.dashboard": "Panou",
+    "nav.signIn": "Conectare",
+    "nav.signUp": "Începe",
+    "nav.getStarted": "Începe",
+
+    // Homepage
+    "home.title": "Descoperă-ți Calea Profesională Perfectă",
+    "home.subtitle":
+      "Fă testul nostru comprehensiv de personalitate RIASEC pentru a descoperi cariere care se aliniază cu interesele, abilitățile și personalitatea ta. Primește recomandări personalizate pentru joburi tradiționale și viitoare.",
+    "home.cta.primary": "Începe Evaluarea de Carieră",
+    "home.cta.secondary": "Află Mai Mult",
+    "home.features.title": "De Ce să Alegi Career Compass?",
+    "home.features.validated.title": "Validat Științific",
+    "home.features.validated.desc":
+      "Bazat pe modelul RIASEC dovedit, folosit de consilierii de carieră din întreaga lume pentru a potrivi personalitățile cu căile de carieră potrivite.",
+    "home.features.future.title": "Perspective de Viitor",
+    "home.features.future.desc":
+      "Primește recomandări pentru cariere tradiționale și roluri emergente, incluzând analiza impactului AI și evaluarea riscului de automatizare.",
+    "home.features.bilingual.title": "Suport Multilingv",
+    "home.features.bilingual.desc":
+      "Disponibil în engleză, spaniolă și română pentru a servi o comunitate diversă de căutători de carieră și profesioniști.",
+    "home.howItWorks.title": "Cum Funcționează",
+    "home.howItWorks.step1.title": "Fă Evaluarea",
+    "home.howItWorks.step1.desc":
+      "Răspunde la 60 de întrebări atent elaborate despre interesele și preferințele tale. Testul durează aproximativ 10-15 minute.",
+    "home.howItWorks.step2.title": "Primește Profilul RIASEC",
+    "home.howItWorks.step2.desc":
+      "Primește profilul tău personalizat de personalitate arătând scorurile tale pentru tipurile Realist, Investigativ, Artistic, Social, Întreprinzător și Convențional.",
+    "home.howItWorks.step3.title": "Explorează Potrivirile de Carieră",
+    "home.howItWorks.step3.desc":
+      "Descoperă cariere care se aliniază cu personalitatea ta, incluzând intervalele salariale, cerințele educaționale și perspectivele viitoare ale jobului.",
+    "home.cta.final.title": "Gata să-ți Găsești Calea Profesională?",
+    "home.cta.final.subtitle":
+      "Alătură-te miilor de profesioniști care și-au descoperit carierele ideale cu Career Compass.",
+    "home.cta.final.button": "Începe Evaluarea Gratuită",
+    "home.footer.tagline": "Te ajutăm să navighezi călătoria ta profesională cu încredere.",
+
+    // Dashboard
+    "dashboard.welcome": "Bun venit înapoi",
+    "dashboard.assessment.title": "Starea Evaluării",
+    "dashboard.assessment.lastCompleted": "Ultima completată:",
+    "dashboard.assessment.topType": "Tipul principal de personalitate:",
+    "dashboard.assessment.viewResults": "Vezi Rezultatele",
+    "dashboard.assessment.retakeTest": "Refă Testul",
+    "dashboard.assessment.notTaken": "Nu ai făcut încă evaluarea.",
+    "dashboard.assessment.takeAssessment": "Fă Evaluarea",
+    "dashboard.account.title": "Starea Contului",
+    "dashboard.account.plan": "Plan:",
+    "dashboard.account.recommendations": "Recomandări de carieră:",
+    "dashboard.account.unlimited": "Nelimitate",
+    "dashboard.account.limited": "6 per categorie",
+    "dashboard.account.upgrade": "Actualizează la Premium",
+    "dashboard.quickActions.title": "Acțiuni Rapide",
+    "dashboard.quickActions.desc": "Explorează opțiunile și perspectivele tale de carieră",
+    "dashboard.quickActions.takeTest": "Fă Testul",
+    "dashboard.quickActions.viewResults": "Vezi Rezultatele",
+    "dashboard.quickActions.careerPath": "Calea Profesională",
+    "dashboard.quickActions.exploreJobs": "Explorează Joburile",
+
+    // Pricing
+    "pricing.title": "Alege Planul de Descoperire a Carierei",
+    "pricing.subtitle":
+      "Începe cu evaluarea noastră gratuită, apoi deblochează perspective avansate și îndrumări personalizate de carieră cu Premium.",
+    "pricing.free.title": "Gratuit",
+    "pricing.free.desc": "Perfect pentru a începe explorarea carierei",
+    "pricing.free.price": "$0",
+    "pricing.free.period": "/pentru totdeauna",
+    "pricing.free.current": "Planul Actual",
+    "pricing.premium.title": "Premium",
+    "pricing.premium.desc": "Îndrumări complete de carieră cu perspective avansate",
+    "pricing.premium.price": "$29",
+    "pricing.premium.period": "/lună",
+    "pricing.premium.popular": "Cel Mai Popular",
+    "pricing.premium.active": "Activ",
+    "pricing.premium.upgrade": "Actualizează la Premium",
+    "pricing.features.assessment": "Evaluare completă de personalitate RIASEC",
+    "pricing.features.profile": "Profil de bază de personalitate cu top 3 tipuri",
+    "pricing.features.traditional": "6 recomandări de cariere tradiționale",
+    "pricing.features.future": "6 recomandări de cariere viitoare",
+    "pricing.features.bilingual": "Suport multilingv (Engleză/Spaniolă/Română)",
+    "pricing.features.insights": "Perspective de bază ale pieței muncii",
+    "pricing.features.everything": "Tot din Gratuit, plus:",
+    "pricing.features.moreRecs": "Peste 20 de recomandări de carieră per categorie",
+    "pricing.features.aiAnalysis": "Analiză detaliată a impactului AI pentru fiecare carieră",
+    "pricing.features.skillRoadmaps": "Hărți de dezvoltare a abilităților",
+    "pricing.features.trendAnalysis": "Analiza tendințelor industriei",
+    "pricing.features.careerPaths": "Recomandări personalizate de căi profesionale",
+    "pricing.features.support": "Suport prioritar pentru clienți",
+    "pricing.features.updates": "Actualizări lunare ale pieței profesionale",
+    "pricing.features.pdfReports": "Descărcări de rapoarte PDF",
+
+    // Common
+    "common.loading": "Se încarcă...",
+    "common.error": "A apărut o eroare",
+    "common.retry": "Încearcă din nou",
+    "common.cancel": "Anulează",
+    "common.save": "Salvează",
+    "common.continue": "Continuă",
+    "common.back": "Înapoi",
+    "common.next": "Următorul",
+    "common.previous": "Anterior",
+    "common.finish": "Finalizează",
+    "common.free": "Gratuit",
+    "common.premium": "Premium",
+  },
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -242,7 +352,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Load language from localStorage on mount
   useEffect(() => {
     const savedLanguage = localStorage.getItem("career-compass-language") as Language
-    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "es")) {
+    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "es" || savedLanguage === "ro")) {
       setLanguage(savedLanguage)
     }
   }, [])

@@ -9,10 +9,13 @@ export default function LanguageToggle() {
   return (
     <div className="flex gap-2">
       <Button variant={language === "en" ? "default" : "outline"} size="sm" onClick={() => setLanguage("en")}>
-        English
+        🇺🇸 English
       </Button>
       <Button variant={language === "es" ? "default" : "outline"} size="sm" onClick={() => setLanguage("es")}>
-        Español
+        🇪🇸 Español
+      </Button>
+      <Button variant={language === "ro" ? "default" : "outline"} size="sm" onClick={() => setLanguage("ro")}>
+        🇷🇴 Română
       </Button>
     </div>
   )
