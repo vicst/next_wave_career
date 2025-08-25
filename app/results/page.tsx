@@ -1,6 +1,6 @@
 "use client"
 
-import { createClient } from "@/lib/supabase/server"
+import { supabase } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import ResultsDisplay from "@/components/results-display"
@@ -14,14 +14,16 @@ export default function ResultsPage() {
   useEffect(() => {
     async function loadResults() {
       try {
-        const supabase = createClient()
         const {
           data: { user },
         } = await supabase.auth.getUser()
+
+        console.log("[v0] Loading results for user:", user?.id || "anonymous")
         setUser(user)
 
         if (user) {
           // Load from database for authenticated users
+          console.log("[v0] Attempting to load from database")
           const { data, error } = await supabase
             .from("user_test_results")
             .select("*")
@@ -31,29 +33,36 @@ export default function ResultsPage() {
             .single()
 
           if (error || !data) {
+            console.log("[v0] Database error or no data:", error)
             // Check localStorage as fallback
             const localResults = localStorage.getItem("career_compass_results")
             if (localResults) {
+              console.log("[v0] Found results in localStorage")
               setTestResults(JSON.parse(localResults))
             } else {
+              console.log("[v0] No results found, redirecting to test")
               router.push("/test")
               return
             }
           } else {
+            console.log("[v0] Loaded results from database:", data)
             setTestResults(data)
           }
         } else {
           // Load from localStorage for anonymous users
+          console.log("[v0] Loading from localStorage for anonymous user")
           const localResults = localStorage.getItem("career_compass_results")
           if (localResults) {
+            console.log("[v0] Found anonymous results in localStorage")
             setTestResults(JSON.parse(localResults))
           } else {
+            console.log("[v0] No anonymous results found, redirecting to test")
             router.push("/test")
             return
           }
         }
       } catch (error) {
-        console.error("Error loading results:", error)
+        console.error("[v0] Error loading results:", error)
         router.push("/test")
       } finally {
         setLoading(false)

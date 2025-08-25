@@ -1,19 +1,21 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Compass, Users, TrendingUp, Globe } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
 import LanguageToggle from "@/components/language-toggle"
+import { AuthModal } from "@/components/auth-modal"
 
 export default function HomePage() {
   const { t } = useLanguage()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const supabase = createClient()
 
   useEffect(() => {
     async function getUser() {
@@ -24,6 +26,17 @@ export default function HomePage() {
       setLoading(false)
     }
     getUser()
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null)
+      if (event === "SIGNED_IN") {
+        setShowAuthModal(false)
+      }
+    })
+
+    return () => subscription.unsubscribe()
   }, [supabase])
 
   if (loading) {
@@ -54,12 +67,10 @@ export default function HomePage() {
               </Button>
             ) : (
               <div className="flex gap-2">
-                <Button variant="outline" asChild>
-                  <Link href="/auth/login">{t("nav.signIn")}</Link>
+                <Button variant="outline" onClick={() => setShowAuthModal(true)}>
+                  {t("nav.signIn")}
                 </Button>
-                <Button asChild>
-                  <Link href="/auth/sign-up">{t("nav.getStarted")}</Link>
-                </Button>
+                <Button onClick={() => setShowAuthModal(true)}>{t("nav.getStarted")}</Button>
               </div>
             )}
           </div>
@@ -189,6 +200,9 @@ export default function HomePage() {
           <p className="text-muted-foreground">{t("home.footer.tagline")}</p>
         </div>
       </footer>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   )
 }

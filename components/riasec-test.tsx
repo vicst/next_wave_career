@@ -130,12 +130,16 @@ export default function RiasecTest({ user }: RiasecTestProps) {
   }
 
   const handleSubmitResults = async (finalAnswers: Answer[]) => {
+    console.log("[v0] Starting to submit results with", finalAnswers.length, "answers")
     setSubmitting(true)
 
     try {
       const { scores, topTypes } = calculateRiasecScores(finalAnswers)
+      console.log("[v0] Calculated scores:", scores)
+      console.log("[v0] Top types:", topTypes)
 
       if (user) {
+        console.log("[v0] Saving results for authenticated user:", user.id)
         const { error } = await supabase.from("user_test_results").insert({
           user_id: user.id,
           riasec_scores: scores,
@@ -144,12 +148,23 @@ export default function RiasecTest({ user }: RiasecTestProps) {
         })
 
         if (error) {
-          console.error("Error saving results:", error)
-          return
+          console.error("[v0] Error saving results to database:", error)
+          const testResults = {
+            riasec_scores: scores,
+            top_personality_types: topTypes,
+            is_premium: false,
+            test_completed_at: new Date().toISOString(),
+            is_anonymous: false,
+          }
+          localStorage.setItem("career_compass_results", JSON.stringify(testResults))
+          console.log("[v0] Saved to localStorage as fallback")
+        } else {
+          console.log("[v0] Successfully saved to database")
         }
 
         router.push("/results")
       } else {
+        console.log("[v0] Saving results for anonymous user")
         const testResults = {
           riasec_scores: scores,
           top_personality_types: topTypes,
@@ -159,10 +174,12 @@ export default function RiasecTest({ user }: RiasecTestProps) {
         }
 
         localStorage.setItem("career_compass_results", JSON.stringify(testResults))
+        console.log("[v0] Saved anonymous results to localStorage")
         router.push("/results")
       }
     } catch (error) {
-      console.error("Error submitting results:", error)
+      console.error("[v0] Error submitting results:", error)
+      alert("There was an error saving your results. Please try again.")
     } finally {
       setSubmitting(false)
     }
