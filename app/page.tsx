@@ -62,9 +62,14 @@ export default function HomePage() {
               <Link href="#about">{t("nav.about")}</Link>
             </Button>
             {user ? (
-              <Button asChild>
-                <Link href="/dashboard">{t("nav.dashboard")}</Link>
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="ghost" asChild>
+                  <Link href="/account">{t("nav.account")}</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/dashboard">{t("nav.dashboard")}</Link>
+                </Button>
+              </div>
             ) : (
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setShowAuthModal(true)}>

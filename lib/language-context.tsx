@@ -20,6 +20,7 @@ const translations = {
     "nav.about": "About",
     "nav.pricing": "Pricing",
     "nav.dashboard": "Dashboard",
+    "nav.account": "Account", // Added account navigation link
     "nav.signIn": "Sign In",
     "nav.signUp": "Get Started",
     "nav.getStarted": "Get Started",
@@ -110,6 +111,23 @@ const translations = {
     "pricing.features.updates": "Monthly career market updates",
     "pricing.features.pdfReports": "PDF report downloads",
 
+    // Account Page
+    "account.title": "My Account", // Added account page translations
+    "account.connectionStatus.title": "Connection Status",
+    "account.connectionStatus.desc": "Your account is successfully connected and authenticated",
+    "account.connectionStatus.connected": "Connected",
+    "account.connectionStatus.since": "Since",
+    "account.profile.title": "Profile Information",
+    "account.profile.email": "Email",
+    "account.profile.provider": "Sign-in method",
+    "account.profile.memberSince": "Member since",
+    "account.profile.emailVerified": "Email verified",
+    "account.actions.title": "Account Actions",
+    "account.actions.desc": "Manage your account and access your career tools",
+    "account.actions.viewDashboard": "View Dashboard",
+    "account.actions.takeAssessment": "Take Assessment",
+    "account.actions.signOut": "Sign Out",
+
     // Common
     "common.loading": "Loading...",
     "common.error": "An error occurred",
@@ -123,6 +141,8 @@ const translations = {
     "common.finish": "Finish",
     "common.free": "Free",
     "common.premium": "Premium",
+    "common.yes": "Yes", // Added yes/no translations
+    "common.no": "No",
   },
   es: {
     // Navigation
@@ -130,6 +150,7 @@ const translations = {
     "nav.about": "Acerca de",
     "nav.pricing": "Precios",
     "nav.dashboard": "Panel",
+    "nav.account": "Cuenta", // Added account navigation link
     "nav.signIn": "Iniciar Sesión",
     "nav.signUp": "Comenzar",
     "nav.getStarted": "Comenzar",
@@ -220,6 +241,23 @@ const translations = {
     "pricing.features.updates": "Actualizaciones mensuales del mercado profesional",
     "pricing.features.pdfReports": "Descargas de informes PDF",
 
+    // Account Page
+    "account.title": "Mi Cuenta", // Added account page translations
+    "account.connectionStatus.title": "Estado de Conexión",
+    "account.connectionStatus.desc": "Tu cuenta está conectada y autenticada exitosamente",
+    "account.connectionStatus.connected": "Conectado",
+    "account.connectionStatus.since": "Desde",
+    "account.profile.title": "Información del Perfil",
+    "account.profile.email": "Correo electrónico",
+    "account.profile.provider": "Método de inicio de sesión",
+    "account.profile.memberSince": "Miembro desde",
+    "account.profile.emailVerified": "Correo verificado",
+    "account.actions.title": "Acciones de Cuenta",
+    "account.actions.desc": "Administra tu cuenta y accede a tus herramientas de carrera",
+    "account.actions.viewDashboard": "Ver Panel",
+    "account.actions.takeAssessment": "Realizar Evaluación",
+    "account.actions.signOut": "Cerrar Sesión",
+
     // Common
     "common.loading": "Cargando...",
     "common.error": "Ocurrió un error",
@@ -233,6 +271,8 @@ const translations = {
     "common.finish": "Finalizar",
     "common.free": "Gratuito",
     "common.premium": "Premium",
+    "common.yes": "Sí", // Added yes/no translations
+    "common.no": "No",
   },
   ro: {
     // Navigation
@@ -240,6 +280,7 @@ const translations = {
     "nav.about": "Despre",
     "nav.pricing": "Prețuri",
     "nav.dashboard": "Panou",
+    "nav.account": "Cont", // Added account navigation link
     "nav.signIn": "Conectare",
     "nav.signUp": "Începe",
     "nav.getStarted": "Începe",
@@ -330,6 +371,23 @@ const translations = {
     "pricing.features.updates": "Actualizări lunare ale pieței profesionale",
     "pricing.features.pdfReports": "Descărcări de rapoarte PDF",
 
+    // Account Page
+    "account.title": "Contul Meu", // Added account page translations
+    "account.connectionStatus.title": "Starea Conexiunii",
+    "account.connectionStatus.desc": "Contul tău este conectat și autentificat cu succes",
+    "account.connectionStatus.connected": "Conectat",
+    "account.connectionStatus.since": "Din",
+    "account.profile.title": "Informații Profil",
+    "account.profile.email": "Email",
+    "account.profile.provider": "Metoda de conectare",
+    "account.profile.memberSince": "Membru din",
+    "account.profile.emailVerified": "Email verificat",
+    "account.actions.title": "Acțiuni Cont",
+    "account.actions.desc": "Gestionează-ți contul și accesează instrumentele de carieră",
+    "account.actions.viewDashboard": "Vezi Panoul",
+    "account.actions.takeAssessment": "Fă Evaluarea",
+    "account.actions.signOut": "Deconectare",
+
     // Common
     "common.loading": "Se încarcă...",
     "common.error": "A apărut o eroare",
@@ -343,6 +401,8 @@ const translations = {
     "common.finish": "Finalizează",
     "common.free": "Gratuit",
     "common.premium": "Premium",
+    "common.yes": "Da", // Added yes/no translations
+    "common.no": "Nu",
   },
 }
 
