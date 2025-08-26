@@ -20,7 +20,7 @@ const translations = {
     "nav.about": "About",
     "nav.pricing": "Pricing",
     "nav.dashboard": "Dashboard",
-    "nav.account": "Account", // Added account navigation link
+    "nav.account": "Account",
     "nav.signIn": "Sign In",
     "nav.signUp": "Get Started",
     "nav.getStarted": "Get Started",
@@ -31,16 +31,16 @@ const translations = {
       "Take our comprehensive RIASEC personality test to uncover careers that align with your interests, skills, and personality. Get personalized recommendations for both traditional and future-ready jobs.",
     "home.cta.primary": "Start Your Career Assessment",
     "home.cta.secondary": "Learn More",
-    "home.features.title": "Why Choose Career Compass?",
+    "home.features.title": "Why Choose NextWave Careers?",
     "home.features.validated.title": "Scientifically Validated",
     "home.features.validated.desc":
       "Based on the proven RIASEC model used by career counselors worldwide to match personalities with suitable career paths.",
     "home.features.future.title": "Future-Ready Insights",
     "home.features.future.desc":
       "Get recommendations for both traditional careers and emerging roles, including AI impact analysis and automation risk assessment.",
-    "home.features.bilingual.title": "Bilingual Support",
+    "home.features.bilingual.title": "Trilingual Support",
     "home.features.bilingual.desc":
-      "Available in both English and Spanish to serve a diverse community of career seekers and professionals.",
+      "Available in English, Spanish, and Romanian to serve a diverse community of career seekers and professionals.",
     "home.howItWorks.title": "How It Works",
     "home.howItWorks.step1.title": "Take the Assessment",
     "home.howItWorks.step1.desc":
@@ -53,7 +53,7 @@ const translations = {
       "Discover careers that align with your personality, including salary ranges, education requirements, and future job outlook.",
     "home.cta.final.title": "Ready to Find Your Career Path?",
     "home.cta.final.subtitle":
-      "Join thousands of professionals who have discovered their ideal careers with Career Compass.",
+      "Join thousands of professionals who have discovered their ideal careers with NextWave Careers.",
     "home.cta.final.button": "Start Your Free Assessment",
     "home.footer.tagline": "Helping you navigate your career journey with confidence.",
 
@@ -99,7 +99,7 @@ const translations = {
     "pricing.features.profile": "Basic personality profile with top 3 types",
     "pricing.features.traditional": "6 traditional career recommendations",
     "pricing.features.future": "6 future-ready career recommendations",
-    "pricing.features.bilingual": "Bilingual support (English/Spanish)",
+    "pricing.features.bilingual": "Trilingual support (English/Spanish/Romanian)",
     "pricing.features.insights": "Basic job market insights",
     "pricing.features.everything": "Everything in Free, plus:",
     "pricing.features.moreRecs": "20+ career recommendations per category",
@@ -112,7 +112,7 @@ const translations = {
     "pricing.features.pdfReports": "PDF report downloads",
 
     // Account Page
-    "account.title": "My Account", // Added account page translations
+    "account.title": "My Account",
     "account.connectionStatus.title": "Connection Status",
     "account.connectionStatus.desc": "Your account is successfully connected and authenticated",
     "account.connectionStatus.connected": "Connected",
@@ -141,8 +141,20 @@ const translations = {
     "common.finish": "Finish",
     "common.free": "Free",
     "common.premium": "Premium",
-    "common.yes": "Yes", // Added yes/no translations
+    "common.yes": "Yes",
     "common.no": "No",
+
+    // Profile Dropdown
+    "profile.dropdown.title": "Profile",
+    "profile.dropdown.account": "Account Settings",
+    "profile.dropdown.history": "Assessment History",
+    "profile.dropdown.signOut": "Sign Out",
+    "profile.history.title": "Assessment History",
+    "profile.history.noTests": "No assessments completed yet",
+    "profile.history.completedOn": "Completed on",
+    "profile.history.topType": "Top type:",
+    "profile.history.viewResults": "View Results",
+    "profile.history.retake": "Retake Assessment",
   },
   es: {
     // Navigation
@@ -150,7 +162,7 @@ const translations = {
     "nav.about": "Acerca de",
     "nav.pricing": "Precios",
     "nav.dashboard": "Panel",
-    "nav.account": "Cuenta", // Added account navigation link
+    "nav.account": "Cuenta",
     "nav.signIn": "Iniciar Sesión",
     "nav.signUp": "Comenzar",
     "nav.getStarted": "Comenzar",
@@ -161,16 +173,16 @@ const translations = {
       "Realiza nuestra prueba integral de personalidad RIASEC para descubrir carreras que se alineen con tus intereses, habilidades y personalidad. Obtén recomendaciones personalizadas para trabajos tradicionales y del futuro.",
     "home.cta.primary": "Comienza tu Evaluación de Carrera",
     "home.cta.secondary": "Saber Más",
-    "home.features.title": "¿Por qué Elegir Career Compass?",
+    "home.features.title": "¿Por qué Elegir NextWave Careers?",
     "home.features.validated.title": "Científicamente Validado",
     "home.features.validated.desc":
       "Basado en el modelo RIASEC comprobado utilizado por consejeros profesionales en todo el mundo para emparejar personalidades con trayectorias profesionales adecuadas.",
     "home.features.future.title": "Perspectivas del Futuro",
     "home.features.future.desc":
       "Obtén recomendaciones para carreras tradicionales y roles emergentes, incluyendo análisis de impacto de IA y evaluación de riesgo de automatización.",
-    "home.features.bilingual.title": "Soporte Bilingüe",
+    "home.features.bilingual.title": "Soporte Trilingüe",
     "home.features.bilingual.desc":
-      "Disponible en inglés y español para servir a una comunidad diversa de buscadores de carrera y profesionales.",
+      "Disponible en inglés, español y rumano para servir a una comunidad diversa de buscadores de carrera y profesionales.",
     "home.howItWorks.title": "Cómo Funciona",
     "home.howItWorks.step1.title": "Realiza la Evaluación",
     "home.howItWorks.step1.desc":
@@ -183,7 +195,7 @@ const translations = {
       "Descubre carreras que se alineen con tu personalidad, incluyendo rangos salariales, requisitos educativos y perspectivas laborales futuras.",
     "home.cta.final.title": "¿Listo para Encontrar tu Camino Profesional?",
     "home.cta.final.subtitle":
-      "Únete a miles de profesionales que han descubierto sus carreras ideales con Career Compass.",
+      "Únete a miles de profesionales que han descubierto sus carreras ideales con NextWave Careers.",
     "home.cta.final.button": "Comienza tu Evaluación Gratuita",
     "home.footer.tagline": "Ayudándote a navegar tu viaje profesional con confianza.",
 
@@ -229,7 +241,7 @@ const translations = {
     "pricing.features.profile": "Perfil básico de personalidad con los 3 tipos principales",
     "pricing.features.traditional": "6 recomendaciones de carreras tradicionales",
     "pricing.features.future": "6 recomendaciones de carreras del futuro",
-    "pricing.features.bilingual": "Soporte bilingüe (Inglés/Español)",
+    "pricing.features.bilingual": "Soporte Trilingüe (Inglés/Español/Rumano)",
     "pricing.features.insights": "Perspectivas básicas del mercado laboral",
     "pricing.features.everything": "Todo en Gratuito, más:",
     "pricing.features.moreRecs": "Más de 20 recomendaciones de carrera por categoría",
@@ -242,7 +254,7 @@ const translations = {
     "pricing.features.pdfReports": "Descargas de informes PDF",
 
     // Account Page
-    "account.title": "Mi Cuenta", // Added account page translations
+    "account.title": "Mi Cuenta",
     "account.connectionStatus.title": "Estado de Conexión",
     "account.connectionStatus.desc": "Tu cuenta está conectada y autenticada exitosamente",
     "account.connectionStatus.connected": "Conectado",
@@ -271,8 +283,20 @@ const translations = {
     "common.finish": "Finalizar",
     "common.free": "Gratuito",
     "common.premium": "Premium",
-    "common.yes": "Sí", // Added yes/no translations
+    "common.yes": "Sí",
     "common.no": "No",
+
+    // Profile Dropdown
+    "profile.dropdown.title": "Perfil",
+    "profile.dropdown.account": "Configuración de Cuenta",
+    "profile.dropdown.history": "Historial de Evaluaciones",
+    "profile.dropdown.signOut": "Cerrar Sesión",
+    "profile.history.title": "Historial de Evaluaciones",
+    "profile.history.noTests": "Aún no se han completado evaluaciones",
+    "profile.history.completedOn": "Completado el",
+    "profile.history.topType": "Tipo principal:",
+    "profile.history.viewResults": "Ver Resultados",
+    "profile.history.retake": "Repetir Evaluación",
   },
   ro: {
     // Navigation
@@ -280,7 +304,7 @@ const translations = {
     "nav.about": "Despre",
     "nav.pricing": "Prețuri",
     "nav.dashboard": "Panou",
-    "nav.account": "Cont", // Added account navigation link
+    "nav.account": "Cont",
     "nav.signIn": "Conectare",
     "nav.signUp": "Începe",
     "nav.getStarted": "Începe",
@@ -291,14 +315,14 @@ const translations = {
       "Fă testul nostru comprehensiv de personalitate RIASEC pentru a descoperi cariere care se aliniază cu interesele, abilitățile și personalitatea ta. Primește recomandări personalizate pentru joburi tradiționale și viitoare.",
     "home.cta.primary": "Începe Evaluarea de Carieră",
     "home.cta.secondary": "Află Mai Mult",
-    "home.features.title": "De Ce să Alegi Career Compass?",
+    "home.features.title": "De Ce să Alegi NextWave Careers?",
     "home.features.validated.title": "Validat Științific",
     "home.features.validated.desc":
       "Bazat pe modelul RIASEC dovedit, folosit de consilierii de carieră din întreaga lume pentru a potrivi personalitățile cu căile de carieră potrivite.",
     "home.features.future.title": "Perspective de Viitor",
     "home.features.future.desc":
       "Primește recomandări pentru cariere tradiționale și roluri emergente, incluzând analiza impactului AI și evaluarea riscului de automatizare.",
-    "home.features.bilingual.title": "Suport Multilingv",
+    "home.features.bilingual.title": "Suport Trilingv",
     "home.features.bilingual.desc":
       "Disponibil în engleză, spaniolă și română pentru a servi o comunitate diversă de căutători de carieră și profesioniști.",
     "home.howItWorks.title": "Cum Funcționează",
@@ -313,7 +337,7 @@ const translations = {
       "Descoperă cariere care se aliniază cu personalitatea ta, incluzând intervalele salariale, cerințele educaționale și perspectivele viitoare ale jobului.",
     "home.cta.final.title": "Gata să-ți Găsești Calea Profesională?",
     "home.cta.final.subtitle":
-      "Alătură-te miilor de profesioniști care și-au descoperit carierele ideale cu Career Compass.",
+      "Alătură-te miilor de profesioniști care și-au descoperit carierele ideale cu NextWave Careers.",
     "home.cta.final.button": "Începe Evaluarea Gratuită",
     "home.footer.tagline": "Te ajutăm să navighezi călătoria ta profesională cu încredere.",
 
@@ -359,7 +383,7 @@ const translations = {
     "pricing.features.profile": "Profil de bază de personalitate cu top 3 tipuri",
     "pricing.features.traditional": "6 recomandări de cariere tradiționale",
     "pricing.features.future": "6 recomandări de cariere viitoare",
-    "pricing.features.bilingual": "Suport multilingv (Engleză/Spaniolă/Română)",
+    "pricing.features.bilingual": "Suport Trilingüe (Engleză/Spaniolă/Rumână)",
     "pricing.features.insights": "Perspective de bază ale pieței muncii",
     "pricing.features.everything": "Tot din Gratuit, plus:",
     "pricing.features.moreRecs": "Peste 20 de recomandări de carieră per categorie",
@@ -372,7 +396,7 @@ const translations = {
     "pricing.features.pdfReports": "Descărcări de rapoarte PDF",
 
     // Account Page
-    "account.title": "Contul Meu", // Added account page translations
+    "account.title": "Contul Meu",
     "account.connectionStatus.title": "Starea Conexiunii",
     "account.connectionStatus.desc": "Contul tău este conectat și autentificat cu succes",
     "account.connectionStatus.connected": "Conectat",
@@ -401,8 +425,20 @@ const translations = {
     "common.finish": "Finalizează",
     "common.free": "Gratuit",
     "common.premium": "Premium",
-    "common.yes": "Da", // Added yes/no translations
+    "common.yes": "Da",
     "common.no": "Nu",
+
+    // Profile Dropdown
+    "profile.dropdown.title": "Profil",
+    "profile.dropdown.account": "Setări Cont",
+    "profile.dropdown.history": "Istoricul Evaluărilor",
+    "profile.dropdown.signOut": "Deconectare",
+    "profile.history.title": "Istoricul Evaluărilor",
+    "profile.history.noTests": "Nu au fost completate încă evaluări",
+    "profile.history.completedOn": "Completat pe",
+    "profile.history.topType": "Tipul principal:",
+    "profile.history.viewResults": "Vezi Rezultatele",
+    "profile.history.retake": "Refă Evaluarea",
   },
 }
 
@@ -411,7 +447,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   // Load language from localStorage on mount
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("career-compass-language") as Language
+    const savedLanguage = localStorage.getItem("nextwave-careers-language") as Language
     if (savedLanguage && (savedLanguage === "en" || savedLanguage === "es" || savedLanguage === "ro")) {
       setLanguage(savedLanguage)
     }
@@ -420,7 +456,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Save language to localStorage when changed
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang)
-    localStorage.setItem("career-compass-language", lang)
+    localStorage.setItem("nextwave-careers-language", lang)
   }
 
   const t = (key: string): string => {

@@ -7,7 +7,7 @@ import { X, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 
 interface AuthModalProps {
@@ -36,6 +36,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setError("")
 
     try {
+      if (!isSupabaseConfigured()) {
+        throw new Error("Supabase not configured")
+      }
+
       console.log("[v0] Starting OAuth login with provider:", provider)
       console.log("[v0] Using Supabase callback URL: https://bjwtjqgfczfctkgmsrbj.supabase.co/auth/v1/callback")
 
@@ -55,6 +59,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       console.error(`[v0] ${provider} login error:`, error)
 
       let errorMessage = `Eroare la conectarea cu ${provider}.`
+
+      if (error.message?.includes("Supabase not configured")) {
+        errorMessage = "Autentificarea nu este configurată. Vă rugăm să contactați administratorul."
+        setError(errorMessage)
+        setIsLoading(false)
+        return
+      }
 
       if (error.message?.includes("blocked") || error.message?.includes("popup")) {
         if (provider === "google") {
@@ -87,6 +98,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setSuccess("")
 
     try {
+      if (!isSupabaseConfigured()) {
+        throw new Error("Supabase not configured")
+      }
+
       if (useMagicLink) {
         const { error } = await supabase.auth.signInWithOtp({
           email,
@@ -117,7 +132,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       }
     } catch (error: any) {
       console.error("Email auth error:", error)
-      setError(error.message || "A apărut o eroare. Încercați din nou.")
+
+      if (error.message?.includes("Supabase not configured")) {
+        setError("Autentificarea nu este configurată. Vă rugăm să contactați administratorul.")
+      } else {
+        setError(error.message || "A apărut o eroare. Încercați din nou.")
+      }
     } finally {
       setIsLoading(false)
     }

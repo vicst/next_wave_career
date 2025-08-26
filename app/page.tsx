@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,6 +9,7 @@ import { Compass, Users, TrendingUp, Globe } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
 import LanguageToggle from "@/components/language-toggle"
 import { AuthModal } from "@/components/auth-modal"
+import { ProfileDropdown } from "@/components/profile-dropdown"
 
 export default function HomePage() {
   const { t } = useLanguage()
@@ -19,24 +20,36 @@ export default function HomePage() {
 
   useEffect(() => {
     async function getUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      setUser(user)
-      setLoading(false)
+      if (!isSupabaseConfigured) {
+        setLoading(false)
+        return
+      }
+
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        setUser(user)
+      } catch (error) {
+        console.warn("[v0] Failed to get user:", error)
+      } finally {
+        setLoading(false)
+      }
     }
     getUser()
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
-      if (event === "SIGNED_IN") {
-        setShowAuthModal(false)
-      }
-    })
+    if (isSupabaseConfigured) {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        setUser(session?.user ?? null)
+        if (event === "SIGNED_IN") {
+          setShowAuthModal(false)
+        }
+      })
 
-    return () => subscription.unsubscribe()
+      return () => subscription.unsubscribe()
+    }
   }, [supabase])
 
   if (loading) {
@@ -54,7 +67,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Compass className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-serif font-bold text-foreground">Career Compass</h1>
+            <h1 className="text-2xl font-serif font-bold text-foreground">NextWave Careers</h1>
           </div>
           <div className="flex items-center gap-4">
             <LanguageToggle />
@@ -63,9 +76,7 @@ export default function HomePage() {
             </Button>
             {user ? (
               <div className="flex gap-2">
-                <Button variant="ghost" asChild>
-                  <Link href="/account">{t("nav.account")}</Link>
-                </Button>
+                <ProfileDropdown user={user} />
                 <Button asChild>
                   <Link href="/dashboard">{t("nav.dashboard")}</Link>
                 </Button>
@@ -200,7 +211,7 @@ export default function HomePage() {
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Compass className="h-6 w-6 text-primary" />
-            <span className="font-serif font-bold text-foreground">Career Compass</span>
+            <span className="font-serif font-bold text-foreground">NextWave Careers</span>
           </div>
           <p className="text-muted-foreground">{t("home.footer.tagline")}</p>
         </div>
