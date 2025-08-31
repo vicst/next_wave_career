@@ -19,29 +19,43 @@ export default function HomePage() {
   const supabase = createClient()
 
   useEffect(() => {
-    async function getUser() {
+    async function handleAuthAndGetUser() {
       if (!isSupabaseConfigured) {
         setLoading(false)
         return
       }
 
       try {
+        const { data, error } = await supabase.auth.getSession()
+
+        if (error) {
+          console.warn("[v0] Session error:", error)
+        }
+
         const {
           data: { user },
         } = await supabase.auth.getUser()
+
         setUser(user)
+
+        if (window.location.hash && window.location.hash.includes("access_token")) {
+          console.log("[v0] Cleaning OAuth tokens from URL")
+          window.history.replaceState({}, document.title, window.location.pathname + window.location.search)
+        }
       } catch (error) {
-        console.warn("[v0] Failed to get user:", error)
+        console.warn("[v0] Failed to handle auth:", error)
       } finally {
         setLoading(false)
       }
     }
-    getUser()
+
+    handleAuthAndGetUser()
 
     if (isSupabaseConfigured) {
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((event, session) => {
+        console.log("[v0] Auth state changed:", event, session?.user?.email)
         setUser(session?.user ?? null)
         if (event === "SIGNED_IN") {
           setShowAuthModal(false)
