@@ -20,28 +20,50 @@ export default function HomePage() {
 
   useEffect(() => {
     async function handleAuthAndGetUser() {
-      if (!isSupabaseConfigured) {
+      console.log("[v0] === AUTH FLOW START ===")
+      console.log("[v0] Current URL:", window.location.href)
+      console.log("[v0] URL hash:", window.location.hash)
+      console.log("[v0] URL search params:", window.location.search)
+      console.log("[v0] Supabase configured:", isSupabaseConfigured())
+
+      if (!isSupabaseConfigured()) {
+        console.log("[v0] Supabase not configured, skipping auth")
         setLoading(false)
         return
       }
 
       try {
-        const { data, error } = await supabase.auth.getSession()
+        console.log("[v0] Getting current session...")
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+        console.log("[v0] Session data:", sessionData)
+        console.log("[v0] Session error:", sessionError)
 
-        if (error) {
-          console.warn("[v0] Session error:", error)
+        if (sessionError) {
+          console.warn("[v0] Session error:", sessionError)
         }
 
+        console.log("[v0] Getting current user...")
         const {
           data: { user },
+          error: userError,
         } = await supabase.auth.getUser()
+        console.log("[v0] User data:", user)
+        console.log("[v0] User error:", userError)
 
         setUser(user)
 
         if (window.location.hash && window.location.hash.includes("access_token")) {
+          console.log("[v0] Found OAuth tokens in URL hash:", window.location.hash)
           console.log("[v0] Cleaning OAuth tokens from URL")
           window.history.replaceState({}, document.title, window.location.pathname + window.location.search)
+          console.log("[v0] URL cleaned, new URL:", window.location.href)
         }
+
+        if (window.location.hash && window.location.hash.includes("error")) {
+          console.log("[v0] Found OAuth error in URL hash:", window.location.hash)
+        }
+
+        console.log("[v0] === AUTH FLOW END ===")
       } catch (error) {
         console.warn("[v0] Failed to handle auth:", error)
       } finally {
@@ -51,15 +73,24 @@ export default function HomePage() {
 
     handleAuthAndGetUser()
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured()) {
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((event, session) => {
-        console.log("[v0] Auth state changed:", event, session?.user?.email)
+        console.log("[v0] === AUTH STATE CHANGE ===")
+        console.log("[v0] Event:", event)
+        console.log("[v0] Session:", session)
+        console.log("[v0] User:", session?.user)
+        console.log("[v0] User email:", session?.user?.email)
+        console.log("[v0] Current URL:", window.location.href)
+
         setUser(session?.user ?? null)
         if (event === "SIGNED_IN") {
+          console.log("[v0] User signed in successfully, closing auth modal")
           setShowAuthModal(false)
+          console.log("[v0] Should redirect to dashboard or stay on current page")
         }
+        console.log("[v0] === AUTH STATE CHANGE END ===")
       })
 
       return () => subscription.unsubscribe()
