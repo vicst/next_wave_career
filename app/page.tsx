@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Compass, Users, TrendingUp, Globe } from "lucide-react"
@@ -13,6 +15,7 @@ import { ProfileDropdown } from "@/components/profile-dropdown"
 
 export default function HomePage() {
   const { t } = useLanguage()
+  const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showAuthModal, setShowAuthModal] = useState(false)
@@ -76,7 +79,7 @@ export default function HomePage() {
     if (isSupabaseConfigured()) {
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange((event, session) => {
+      } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
         console.log("[v0] === AUTH STATE CHANGE ===")
         console.log("[v0] Event:", event)
         console.log("[v0] Session:", session)
@@ -88,14 +91,15 @@ export default function HomePage() {
         if (event === "SIGNED_IN") {
           console.log("[v0] User signed in successfully, closing auth modal")
           setShowAuthModal(false)
-          console.log("[v0] Should redirect to dashboard or stay on current page")
+          console.log("[v0] Redirecting to dashboard...")
+          router.push("/dashboard")
         }
         console.log("[v0] === AUTH STATE CHANGE END ===")
       })
 
       return () => subscription.unsubscribe()
     }
-  }, [supabase])
+  }, [supabase, router])
 
   if (loading) {
     return (

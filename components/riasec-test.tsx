@@ -74,7 +74,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
     // Save current answer
     const newAnswer: Answer = {
       questionId: currentQuestion.id,
-      score: Number.parseInt(currentAnswer),
+      score: Math.floor(Number.parseFloat(currentAnswer)),
       riasecType: currentQuestion.riasec_type,
     }
 
@@ -262,31 +262,31 @@ export default function RiasecTest({ user }: RiasecTestProps) {
             <RadioGroup value={currentAnswer} onValueChange={handleAnswerChange}>
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="r1" />
+                  <RadioGroupItem value="0" id="r1" />
                   <Label htmlFor="r1" className="flex-1 cursor-pointer">
                     {language === "en" ? "Strongly Disagree" : "Totalmente en desacuerdo"}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="2" id="r2" />
+                  <RadioGroupItem value="0.1" id="r2" />
                   <Label htmlFor="r2" className="flex-1 cursor-pointer">
                     {language === "en" ? "Disagree" : "En desacuerdo"}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="3" id="r3" />
+                  <RadioGroupItem value="0.2" id="r3" />
                   <Label htmlFor="r3" className="flex-1 cursor-pointer">
                     {language === "en" ? "Neutral" : "Neutral"}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="4" id="r4" />
+                  <RadioGroupItem value="1" id="r4" />
                   <Label htmlFor="r4" className="flex-1 cursor-pointer">
                     {language === "en" ? "Agree" : "De acuerdo"}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="5" id="r5" />
+                  <RadioGroupItem value="1.1" id="r5" />
                   <Label htmlFor="r5" className="flex-1 cursor-pointer">
                     {language === "en" ? "Strongly Agree" : "Totalmente de acuerdo"}
                   </Label>
