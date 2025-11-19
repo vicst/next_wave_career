@@ -25,6 +25,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [showOAuthHelp, setShowOAuthHelp] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
 
   const supabase = createClient()
   const router = useRouter()
@@ -112,14 +113,23 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         if (error) throw error
         setSuccess("Link-ul magic a fost trimis pe email!")
       } else if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         })
+
         if (error) throw error
+
+        // Check if user already exists (Supabase returns user but with identities: [])
+        if (data.user && (!data.user.identities || data.user.identities.length === 0)) {
+          setError("Un cont cu acest email există deja. Vă rugăm să vă conectați.")
+          setIsLoading(false)
+          return
+        }
+
         setSuccess("Verificați emailul pentru confirmarea contului!")
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -135,6 +145,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
       if (error.message?.includes("Supabase not configured")) {
         setError("Autentificarea nu este configurată. Vă rugăm să contactați administratorul.")
+      } else if (error.message?.includes("User already registered")) {
+        setError("Un cont cu acest email există deja. Vă rugăm să vă conectați.")
       } else {
         setError(error.message || "A apărut o eroare. Încercați din nou.")
       }
@@ -276,7 +288,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 }}
                 className="text-cyan-600 hover:text-cyan-700 font-medium"
               >
-                Conectare
+                 
               </button>
             </div>
           </>

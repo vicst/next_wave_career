@@ -310,7 +310,7 @@ const translations = {
     "nav.getStarted": "Începe",
 
     // Homepage
-    "home.title": "Descoperă-ți Calea Profesională Perfectă",
+    "home.title": "Descoperă-ți calea profesională perfectă",
     "home.subtitle":
       "Fă testul nostru comprehensiv de personalitate RIASEC pentru a descoperi cariere care se aliniază cu interesele, abilitățile și personalitatea ta. Primește recomandări personalizate pentru joburi tradiționale și viitoare.",
     "home.cta.primary": "Începe Evaluarea de Carieră",

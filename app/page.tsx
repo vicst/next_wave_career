@@ -45,15 +45,20 @@ export default function HomePage() {
           console.warn("[v0] Session error:", sessionError)
         }
 
-        console.log("[v0] Getting current user...")
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser()
-        console.log("[v0] User data:", user)
-        console.log("[v0] User error:", userError)
+        if (sessionData?.session) {
+          console.log("[v0] Getting current user...")
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser()
+          console.log("[v0] User data:", user)
+          console.log("[v0] User error:", userError)
 
-        setUser(user)
+          setUser(user)
+        } else {
+          console.log("[v0] No active session, skipping getUser")
+          setUser(null)
+        }
 
         if (window.location.hash && window.location.hash.includes("access_token")) {
           console.log("[v0] Found OAuth tokens in URL hash:", window.location.hash)

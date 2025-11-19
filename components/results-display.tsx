@@ -288,7 +288,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
                   {language === "en" ? "Your Top Personality Types" : "Tus Tipos de Personalidad Principales"}
                 </h3>
                 <div className="space-y-4">
-                  {top_personality_types.slice(0, 3).map((type, index) => {
+                  {top_personality_types.slice(0, 3).filter(type => riasec_scores[type as keyof typeof riasec_scores] > 0).map((type, index) => {
                     const description = getPersonalityDescription(type)
                     const score = riasec_scores[type as keyof typeof riasec_scores]
                     const percentage = Math.round((score / 50) * 100) // Assuming max score is 50
