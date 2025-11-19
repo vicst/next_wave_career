@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -10,7 +10,6 @@ import { Compass, ArrowLeft, ArrowRight, CheckCircle } from "lucide-react"
 import { supabase } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/lib/language-context"
-import LanguageToggle from "@/components/language-toggle"
 
 interface Question {
   id: number
@@ -19,27 +18,21 @@ interface Question {
   riasec_type: string
 }
 
-interface Answer {
-  questionId: number
-  score: number
-  riasecType: string
-}
-
 interface RiasecTestProps {
   user?: any
 }
 
+const QUESTIONS_PER_PAGE = 3
+
 export default function RiasecTest({ user }: RiasecTestProps) {
-  const { language, t } = useLanguage()
+  const { language } = useLanguage()
   const router = useRouter()
   const [questions, setQuestions] = useState<Question[]>([])
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<Answer[]>([])
-  const [currentAnswer, setCurrentAnswer] = useState<string>("")
+  const [currentPage, setCurrentPage] = useState(0)
+  const [answers, setAnswers] = useState<Map<number, string>>(new Map())
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
-  // Load questions from database
   useEffect(() => {
     async function loadQuestions() {
       try {
@@ -61,66 +54,49 @@ export default function RiasecTest({ user }: RiasecTestProps) {
     loadQuestions()
   }, [])
 
-  const currentQuestion = questions[currentQuestionIndex]
-  const progress = ((currentQuestionIndex + 1) / questions.length) * 100
+  const totalPages = Math.ceil(questions.length / QUESTIONS_PER_PAGE)
+  const startIndex = currentPage * QUESTIONS_PER_PAGE
+  const endIndex = Math.min(startIndex + QUESTIONS_PER_PAGE, questions.length)
+  const currentQuestions = questions.slice(startIndex, endIndex)
+  const answeredCount = Array.from(answers.keys()).length
+  const progress = (answeredCount / questions.length) * 100
 
-  const handleAnswerChange = (value: string) => {
-    setCurrentAnswer(value)
+  const handleAnswerChange = (questionId: number, value: string) => {
+    const newAnswers = new Map(answers)
+    newAnswers.set(questionId, value)
+    setAnswers(newAnswers)
+  }
+
+  const isPageComplete = () => {
+    return currentQuestions.every(q => answers.has(q.id))
   }
 
   const handleNext = () => {
-    if (!currentAnswer) return
+    if (!isPageComplete()) return
 
-    // Save current answer
-    const newAnswer: Answer = {
-      questionId: currentQuestion.id,
-      score: Math.floor(Number.parseFloat(currentAnswer)),
-      riasecType: currentQuestion.riasec_type,
-    }
-
-    // Update answers array
-    const updatedAnswers = [...answers]
-    const existingIndex = updatedAnswers.findIndex((a) => a.questionId === currentQuestion.id)
-
-    if (existingIndex >= 0) {
-      updatedAnswers[existingIndex] = newAnswer
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1)
     } else {
-      updatedAnswers.push(newAnswer)
-    }
-
-    setAnswers(updatedAnswers)
-
-    // Move to next question or finish
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
-      // Load existing answer for next question if available
-      const nextQuestion = questions[currentQuestionIndex + 1]
-      const existingAnswer = updatedAnswers.find((a) => a.questionId === nextQuestion.id)
-      setCurrentAnswer(existingAnswer ? existingAnswer.score.toString() : "")
-    } else {
-      // Test completed, calculate and save results
-      handleSubmitResults(updatedAnswers)
+      handleSubmitResults()
     }
   }
 
   const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1)
-      // Load existing answer for previous question
-      const prevQuestion = questions[currentQuestionIndex - 1]
-      const existingAnswer = answers.find((a) => a.questionId === prevQuestion.id)
-      setCurrentAnswer(existingAnswer ? existingAnswer.score.toString() : "")
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1)
     }
   }
 
-  const calculateRiasecScores = (answers: Answer[]) => {
+  const calculateRiasecScores = () => {
     const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 }
 
-    answers.forEach((answer) => {
-      scores[answer.riasecType as keyof typeof scores] += answer.score
+    answers.forEach((scoreStr, questionId) => {
+      const question = questions.find(q => q.id === questionId)
+      if (question) {
+        scores[question.riasec_type as keyof typeof scores] += Math.floor(Number.parseFloat(scoreStr))
+      }
     })
 
-    // Get top 3 personality types
     const sortedTypes = Object.entries(scores)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
@@ -129,17 +105,13 @@ export default function RiasecTest({ user }: RiasecTestProps) {
     return { scores, topTypes: sortedTypes }
   }
 
-  const handleSubmitResults = async (finalAnswers: Answer[]) => {
-    console.log("[v0] Starting to submit results with", finalAnswers.length, "answers")
+  const handleSubmitResults = async () => {
     setSubmitting(true)
 
     try {
-      const { scores, topTypes } = calculateRiasecScores(finalAnswers)
-      console.log("[v0] Calculated scores:", scores)
-      console.log("[v0] Top types:", topTypes)
+      const { scores, topTypes } = calculateRiasecScores()
 
       if (user) {
-        console.log("[v0] Saving results for authenticated user:", user.id)
         const { error } = await supabase.from("user_test_results").insert({
           user_id: user.id,
           riasec_scores: scores,
@@ -148,7 +120,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
         })
 
         if (error) {
-          console.error("[v0] Error saving results to database:", error)
+          console.error("Error saving results to database:", error)
           const testResults = {
             riasec_scores: scores,
             top_personality_types: topTypes,
@@ -157,14 +129,10 @@ export default function RiasecTest({ user }: RiasecTestProps) {
             is_anonymous: false,
           }
           localStorage.setItem("career_compass_results", JSON.stringify(testResults))
-          console.log("[v0] Saved to localStorage as fallback")
-        } else {
-          console.log("[v0] Successfully saved to database")
         }
 
         router.push("/results")
       } else {
-        console.log("[v0] Saving results for anonymous user")
         const testResults = {
           riasec_scores: scores,
           top_personality_types: topTypes,
@@ -174,11 +142,10 @@ export default function RiasecTest({ user }: RiasecTestProps) {
         }
 
         localStorage.setItem("career_compass_results", JSON.stringify(testResults))
-        console.log("[v0] Saved anonymous results to localStorage")
         router.push("/results")
       }
     } catch (error) {
-      console.error("[v0] Error submitting results:", error)
+      console.error("Error submitting results:", error)
       alert("There was an error saving your results. Please try again.")
     } finally {
       setSubmitting(false)
@@ -190,7 +157,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <Compass className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
-          <p className="text-muted-foreground">{t("common.loading")}</p>
+          <p className="text-muted-foreground">{language === "en" ? "Loading..." : "Cargando..."}</p>
         </div>
       </div>
     )
@@ -200,7 +167,9 @@ export default function RiasecTest({ user }: RiasecTestProps) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">No questions available. Please try again later.</p>
+          <p className="text-muted-foreground">
+            {language === "en" ? "No questions available. Please try again later." : "No hay preguntas disponibles. Por favor, inténtalo más tarde."}
+          </p>
         </div>
       </div>
     )
@@ -208,115 +177,98 @@ export default function RiasecTest({ user }: RiasecTestProps) {
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-3xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Compass className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-serif font-bold text-foreground">Career Compass</h1>
-          </div>
-
-          {/* Language Toggle */}
-          <div className="flex justify-center mb-6">
-            <LanguageToggle />
-          </div>
-
-          <h2 className="text-xl font-serif font-semibold text-foreground mb-2">
-            {language === "en" ? "RIASEC Career Assessment" : "Evaluación de Carrera RIASEC"}
-          </h2>
-          <p className="text-muted-foreground">
+      <div className="container mx-auto max-w-4xl">
+        <div className="mb-6">
+          <p className="text-center text-sm text-muted-foreground mb-4">
             {language === "en"
-              ? `Question ${currentQuestionIndex + 1} of ${questions.length}`
-              : `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`}
+              ? `Questions ${startIndex + 1}-${endIndex} of ${questions.length}`
+              : `Preguntas ${startIndex + 1}-${endIndex} de ${questions.length}`}
           </p>
-
-          {!user && (
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                {language === "en"
-                  ? "Taking the test anonymously. Sign up after completion to save your results permanently."
-                  : "Realizando la prueba de forma anónima. Regístrate después de completarla para guardar tus resultados permanentemente."}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8">
           <Progress value={progress} className="h-2" />
         </div>
 
-        {/* Question Card */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="font-serif text-lg">
-              {language === "en" ? currentQuestion.question_text_en : currentQuestion.question_text_es}
-            </CardTitle>
-            <CardDescription>
-              {language === "en"
-                ? "Rate how much this statement describes you:"
-                : "Califica qué tanto te describe esta afirmación:"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup value={currentAnswer} onValueChange={handleAnswerChange}>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0" id="r1" />
-                  <Label htmlFor="r1" className="flex-1 cursor-pointer">
-                    {language === "en" ? "Strongly Disagree" : "Totalmente en desacuerdo"}
-                  </Label>
+        <div className="space-y-6 mb-8">
+          {currentQuestions.map((question, index) => (
+            <Card key={question.id} className="border-2">
+              <CardContent className="pt-6">
+                <div className="mb-4">
+                  <h3 className="text-lg font-medium mb-4">
+                    <span className="text-primary font-semibold mr-2">{startIndex + index + 1}.</span>
+                    {language === "en" ? question.question_text_en : question.question_text_es}
+                  </h3>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0.1" id="r2" />
-                  <Label htmlFor="r2" className="flex-1 cursor-pointer">
-                    {language === "en" ? "Disagree" : "En desacuerdo"}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0.2" id="r3" />
-                  <Label htmlFor="r3" className="flex-1 cursor-pointer">
-                    {language === "en" ? "Neutral" : "Neutral"}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="r4" />
-                  <Label htmlFor="r4" className="flex-1 cursor-pointer">
-                    {language === "en" ? "Agree" : "De acuerdo"}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1.1" id="r5" />
-                  <Label htmlFor="r5" className="flex-1 cursor-pointer">
-                    {language === "en" ? "Strongly Agree" : "Totalmente de acuerdo"}
-                  </Label>
-                </div>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+                <RadioGroup 
+                  value={answers.get(question.id) || ""} 
+                  onValueChange={(value) => handleAnswerChange(question.id, value)}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                      <RadioGroupItem value="0" id={`q${question.id}-r1`} />
+                      <Label htmlFor={`q${question.id}-r1`} className="flex-1 cursor-pointer font-normal">
+                        {language === "en" ? "Strongly Disagree" : "Totalmente en desacuerdo"}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                      <RadioGroupItem value="0.1" id={`q${question.id}-r2`} />
+                      <Label htmlFor={`q${question.id}-r2`} className="flex-1 cursor-pointer font-normal">
+                        {language === "en" ? "Disagree" : "En desacuerdo"}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                      <RadioGroupItem value="0.2" id={`q${question.id}-r3`} />
+                      <Label htmlFor={`q${question.id}-r3`} className="flex-1 cursor-pointer font-normal">
+                        {language === "en" ? "Neutral" : "Neutral"}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                      <RadioGroupItem value="1" id={`q${question.id}-r4`} />
+                      <Label htmlFor={`q${question.id}-r4`} className="flex-1 cursor-pointer font-normal">
+                        {language === "en" ? "Agree" : "De acuerdo"}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
+                      <RadioGroupItem value="1.1" id={`q${question.id}-r5`} />
+                      <Label htmlFor={`q${question.id}-r5`} className="flex-1 cursor-pointer font-normal">
+                        {language === "en" ? "Strongly Agree" : "Totalmente de acuerdo"}
+                      </Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-        {/* Navigation */}
         <div className="flex justify-between items-center">
-          <Button variant="outline" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
+          <Button 
+            variant="outline" 
+            onClick={handlePrevious} 
+            disabled={currentPage === 0}
+            size="lg"
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.previous")}
+            {language === "en" ? "Previous" : "Anterior"}
           </Button>
 
-          <Button onClick={handleNext} disabled={!currentAnswer || submitting} className="min-w-[120px]">
+          <Button 
+            onClick={handleNext} 
+            disabled={!isPageComplete() || submitting} 
+            size="lg"
+            className="min-w-[140px]"
+          >
             {submitting ? (
               <div className="flex items-center">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 {language === "en" ? "Saving..." : "Guardando..."}
               </div>
-            ) : currentQuestionIndex === questions.length - 1 ? (
+            ) : currentPage === totalPages - 1 ? (
               <>
                 <CheckCircle className="h-4 w-4 mr-2" />
-                {t("common.finish")}
+                {language === "en" ? "Finish" : "Finalizar"}
               </>
             ) : (
               <>
-                {t("common.next")}
+                {language === "en" ? "Next" : "Siguiente"}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </>
             )}
