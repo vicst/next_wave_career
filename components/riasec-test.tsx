@@ -15,6 +15,7 @@ interface Question {
   id: number
   question_text_en: string
   question_text_es: string
+  question_text_ro?: string
   riasec_type: string
 }
 
@@ -25,7 +26,7 @@ interface RiasecTestProps {
 const QUESTIONS_PER_PAGE = 3
 
 export default function RiasecTest({ user }: RiasecTestProps) {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const router = useRouter()
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentPage, setCurrentPage] = useState(0)
@@ -60,6 +61,13 @@ export default function RiasecTest({ user }: RiasecTestProps) {
   const currentQuestions = questions.slice(startIndex, endIndex)
   const answeredCount = Array.from(answers.keys()).length
   const progress = (answeredCount / questions.length) * 100
+
+const getQuestionText = (question: Question) => {
+  if (language === "en") return question.question_text_en
+  if (language === "es") return question.question_text_es
+  if (language === "ro") return question.question_text_ro || question.question_text_en
+  return question.question_text_en
+}
 
   const handleAnswerChange = (questionId: number, value: string) => {
     const newAnswers = new Map(answers)
@@ -146,7 +154,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
       }
     } catch (error) {
       console.error("Error submitting results:", error)
-      alert("There was an error saving your results. Please try again.")
+      alert(t("test.error"))
     } finally {
       setSubmitting(false)
     }
@@ -157,7 +165,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <Compass className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
-          <p className="text-muted-foreground">{language === "en" ? "Loading..." : "Cargando..."}</p>
+          <p className="text-muted-foreground">{t("test.loading")}</p>
         </div>
       </div>
     )
@@ -167,9 +175,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">
-            {language === "en" ? "No questions available. Please try again later." : "No hay preguntas disponibles. Por favor, inténtalo más tarde."}
-          </p>
+          <p className="text-muted-foreground">{t("test.noQuestions")}</p>
         </div>
       </div>
     )
@@ -180,9 +186,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
       <div className="container mx-auto max-w-4xl">
         <div className="mb-6">
           <p className="text-center text-sm text-muted-foreground mb-4">
-            {language === "en"
-              ? `Questions ${startIndex + 1}-${endIndex} of ${questions.length}`
-              : `Preguntas ${startIndex + 1}-${endIndex} de ${questions.length}`}
+            {t("test.progress").replace("{start}", String(startIndex + 1)).replace("{end}", String(endIndex)).replace("{total}", String(questions.length))}
           </p>
           <Progress value={progress} className="h-2" />
         </div>
@@ -194,7 +198,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
                 <div className="mb-4">
                   <h3 className="text-lg font-medium mb-4">
                     <span className="text-primary font-semibold mr-2">{startIndex + index + 1}.</span>
-                    {language === "en" ? question.question_text_en : question.question_text_es}
+                    {getQuestionText(question)}
                   </h3>
                 </div>
                 <RadioGroup 
@@ -205,31 +209,31 @@ export default function RiasecTest({ user }: RiasecTestProps) {
                     <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
                       <RadioGroupItem value="0" id={`q${question.id}-r1`} />
                       <Label htmlFor={`q${question.id}-r1`} className="flex-1 cursor-pointer font-normal">
-                        {language === "en" ? "Strongly Disagree" : "Totalmente en desacuerdo"}
+                        {t("test.stronglyDisagree")}
                       </Label>
                     </div>
                     <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
                       <RadioGroupItem value="0.1" id={`q${question.id}-r2`} />
                       <Label htmlFor={`q${question.id}-r2`} className="flex-1 cursor-pointer font-normal">
-                        {language === "en" ? "Disagree" : "En desacuerdo"}
+                        {t("test.disagree")}
                       </Label>
                     </div>
                     <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
                       <RadioGroupItem value="0.2" id={`q${question.id}-r3`} />
                       <Label htmlFor={`q${question.id}-r3`} className="flex-1 cursor-pointer font-normal">
-                        {language === "en" ? "Neutral" : "Neutral"}
+                        {t("test.neutral")}
                       </Label>
                     </div>
                     <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
                       <RadioGroupItem value="1" id={`q${question.id}-r4`} />
                       <Label htmlFor={`q${question.id}-r4`} className="flex-1 cursor-pointer font-normal">
-                        {language === "en" ? "Agree" : "De acuerdo"}
+                        {t("test.agree")}
                       </Label>
                     </div>
                     <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
                       <RadioGroupItem value="1.1" id={`q${question.id}-r5`} />
                       <Label htmlFor={`q${question.id}-r5`} className="flex-1 cursor-pointer font-normal">
-                        {language === "en" ? "Strongly Agree" : "Totalmente de acuerdo"}
+                        {t("test.stronglyAgree")}
                       </Label>
                     </div>
                   </div>
@@ -247,7 +251,7 @@ export default function RiasecTest({ user }: RiasecTestProps) {
             size="lg"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {language === "en" ? "Previous" : "Anterior"}
+            {t("test.previous")}
           </Button>
 
           <Button 
@@ -259,16 +263,16 @@ export default function RiasecTest({ user }: RiasecTestProps) {
             {submitting ? (
               <div className="flex items-center">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                {language === "en" ? "Saving..." : "Guardando..."}
+                {t("test.saving")}
               </div>
             ) : currentPage === totalPages - 1 ? (
               <>
                 <CheckCircle className="h-4 w-4 mr-2" />
-                {language === "en" ? "Finish" : "Finalizar"}
+                {t("test.finish")}
               </>
             ) : (
               <>
-                {language === "en" ? "Next" : "Siguiente"}
+                {t("test.next")}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </>
             )}

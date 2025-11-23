@@ -144,6 +144,23 @@ const translations = {
     "common.yes": "Yes",
     "common.no": "No",
 
+
+    // RIASEC Test
+    "test.loading": "Loading...",
+    "test.noQuestions": "No questions available. Please try again later.",
+    "test.progress": "Questions {start}-{end} of {total}",
+    "test.stronglyDisagree": "Strongly Disagree",
+    "test.disagree": "Disagree",
+    "test.neutral": "Neutral",
+    "test.agree": "Agree",
+    "test.stronglyAgree": "Strongly Agree",
+    "test.previous": "Previous",
+    "test.next": "Next",
+    "test.finish": "Finish",
+    "test.saving": "Saving...",
+    "test.error": "There was an error saving your results. Please try again.",
+
+
     // Profile Dropdown
     "profile.dropdown.title": "Profile",
     "profile.dropdown.account": "Account Settings",
@@ -286,6 +303,21 @@ const translations = {
     "common.yes": "Sí",
     "common.no": "No",
 
+    // RIASEC Test
+    "test.loading": "Cargando...",
+    "test.noQuestions": "No hay preguntas disponibles. Por favor, inténtalo más tarde.",
+    "test.progress": "Preguntas {start}-{end} de {total}",
+    "test.stronglyDisagree": "Totalmente en desacuerdo",
+    "test.disagree": "En desacuerdo",
+    "test.neutral": "Neutral",
+    "test.agree": "De acuerdo",
+    "test.stronglyAgree": "Totalmente de acuerdo",
+    "test.previous": "Anterior",
+    "test.next": "Siguiente",
+    "test.finish": "Finalizar",
+    "test.saving": "Guardando...",
+    "test.error": "Hubo un error al guardar tus resultados. Por favor, inténtalo de nuevo.",
+
     // Profile Dropdown
     "profile.dropdown.title": "Perfil",
     "profile.dropdown.account": "Configuración de Cuenta",
@@ -427,6 +459,21 @@ const translations = {
     "common.premium": "Premium",
     "common.yes": "Da",
     "common.no": "Nu",
+
+    // RIASEC Test
+    "test.loading": "Se încarcă...",
+    "test.noQuestions": "Nu sunt întrebări disponibile. Vă rugăm să încercați mai târziu.",
+    "test.progress": "Întrebările {start}-{end} din {total}",
+    "test.stronglyDisagree": "Total dezacord",
+    "test.disagree": "Dezacord",
+    "test.neutral": "Neutru",
+    "test.agree": "De acord",
+    "test.stronglyAgree": "Total de acord",
+    "test.previous": "Anterior",
+    "test.next": "Următorul",
+    "test.finish": "Finalizare",
+    "test.saving": "Se salvează...",
+    "test.error": "A apărut o eroare la salvarea rezultatelor. Vă rugăm să încercați din nou.",
 
     // Profile Dropdown
     "profile.dropdown.title": "Profil",
