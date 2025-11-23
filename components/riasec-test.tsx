@@ -76,7 +76,7 @@ const getQuestionText = (question: Question) => {
   }
 
   const isPageComplete = () => {
-    return currentQuestions.every(q => answers.has(q.id))
+  return currentQuestions.every(q => answers.has(q.id))
   }
 
   const handleNext = () => {
@@ -84,6 +84,9 @@ const getQuestionText = (question: Question) => {
 
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1)
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }, 0)
     } else {
       handleSubmitResults()
     }
@@ -92,9 +95,11 @@ const getQuestionText = (question: Question) => {
   const handlePrevious = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1)
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }, 0)
     }
   }
-
   const calculateRiasecScores = () => {
     const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 }
 
