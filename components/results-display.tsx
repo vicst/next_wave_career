@@ -10,6 +10,7 @@ import { Compass, Download, Share2, Star, TrendingUp, AlertTriangle, UserPlus } 
 import { supabase } from "@/lib/supabase/client"
 import Link from "next/link"
 import RiasecChart from "@/components/riasec-chart"
+import { PDFDownloadButton } from '@/components/pdf-download-button';
 
 interface TestResults {
   id?: number
@@ -248,11 +249,14 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mt-6">
-            <Button variant="outline" size="sm" disabled={is_anonymous}>
-              <Download className="h-4 w-4 mr-2" />
-              {language === "en" ? "Download PDF" : "Descargar PDF"}
-            </Button>
+          <div className="flex gap-2 justify-center mt-6">
+            <PDFDownloadButton
+              testResults={testResults}
+              userName={user?.user_metadata?.full_name || 'User'}
+              userEmail={user?.email}
+              language={language}
+              disabled={false}
+            />
             <Button variant="outline" size="sm" disabled={is_anonymous}>
               <Share2 className="h-4 w-4 mr-2" />
               {language === "en" ? "Share Results" : "Compartir Resultados"}
