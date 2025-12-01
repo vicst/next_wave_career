@@ -121,7 +121,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
   useEffect(() => {
     async function loadJobs() {
       try {
-        // Get jobs that match user's top personality types
+        // Get jobs that match user's top vocational types
         const riasecPattern = top_personality_types.join("|")
 
         const jobLimit = user && is_premium ? 20 : user ? 10 : 6
@@ -218,7 +218,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
           </h2>
           <p className="text-muted-foreground">
             {language === "en"
-              ? "Discover careers that match your personality and interests"
+              ? "Discover careers that match your interests"
               : "Descubre carreras que coincidan con tu personalidad e intereses"}
           </p>
 
@@ -271,11 +271,11 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="font-serif">
-              {language === "en" ? "Your RIASEC Personality Profile" : "Tu Perfil de Personalidad RIASEC"}
+              {language === "en" ? "Your RIASEC Vocational Profile" : "Tu perfil de vocación RIASEC"}
             </CardTitle>
             <CardDescription>
               {language === "en"
-                ? "Your scores across the six personality types that influence career preferences"
+                ? "Your scores across the six vocation types that influence career preferences"
                 : "Tus puntuaciones en los seis tipos de personalidad que influyen en las preferencias profesionales"}
             </CardDescription>
           </CardHeader>
@@ -286,10 +286,10 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
                 <RiasecChart scores={riasec_scores} language={language} />
               </div>
 
-              {/* Top Personality Types */}
+              {/* Top Vocational Types */}
               <div>
                 <h3 className="text-lg font-serif font-semibold mb-4">
-                  {language === "en" ? "Your Top Personality Types" : "Tus Tipos de Personalidad Principales"}
+                  {language === "en" ? "Your Top Vocational Types" : "Tus Tipos de Personalidad Principales"}
                 </h3>
                 <div className="space-y-4">
                   {top_personality_types.slice(0, 3).filter(type => riasec_scores[type as keyof typeof riasec_scores] > 0).map((type, index) => {
@@ -334,7 +334,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
             </CardTitle>
             <CardDescription>
               {language === "en"
-                ? "Careers that align with your personality profile"
+                ? "Careers that align with your vocational profile"
                 : "Carreras que se alinean con tu perfil de personalidad"}
             </CardDescription>
           </CardHeader>
@@ -485,7 +485,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
                                 <span className="text-xs text-muted-foreground">
                                   {language === "en" ? "AI Impact:" : "Impacto IA:"}
                                 </span>
-                                <Badge className={getRiskBadgeColor(job.ai_impact_level)} size="sm">
+                                <Badge className={getRiskBadgeColor(job.ai_impact_level)}>
                                   {job.ai_impact_level}
                                 </Badge>
                               </div>
@@ -495,7 +495,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
                                 <span className="text-xs text-muted-foreground">
                                   {language === "en" ? "Automation Risk:" : "Riesgo Automatización:"}
                                 </span>
-                                <Badge className={getRiskBadgeColor(job.automation_risk)} size="sm">
+                                <Badge className={getRiskBadgeColor(job.automation_risk)}>
                                   <AlertTriangle className="h-3 w-3 mr-1" />
                                   {job.automation_risk}
                                 </Badge>

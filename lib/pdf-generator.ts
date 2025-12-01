@@ -246,7 +246,7 @@ export class PDFGenerator {
           <div class="scores-grid">${scoresHTML}</div>
         </div>
         <div class="section">
-          <h2>Profilul tau de personalitate</h2>
+          <h2>Profilul tău vocațional</h2>
           ${personalityTypesHTML}
         </div>
         <div class="page-break"></div>

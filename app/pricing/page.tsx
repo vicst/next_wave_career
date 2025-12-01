@@ -97,11 +97,11 @@ export default async function PricingPage() {
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-600" />
-                    <span>Complete RIASEC personality assessment</span>
+                    <span>Complete RIASEC vocational assessment</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-600" />
-                    <span>Basic personality profile with top 3 types</span>
+                    <span>Basic vocational profile with top 3 types</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-600" />

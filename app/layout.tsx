@@ -18,7 +18,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "NextWave Careers - Discover Your Career Path",
-  description: "Take the RIASEC personality test to discover careers that match your interests and personality",
+  description: "Take the RIASEC vocational test to discover careers that match your interests",
   generator: "v0.app",
 }
 

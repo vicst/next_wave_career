@@ -7,11 +7,11 @@
 
 ## Overview
 
-Career Compass is a trilingual (English/Spanish/Romanian) career guidance web application using the Holland RIASEC personality test. Users can take the assessment anonymously or create accounts for premium features and result saving.
+Career Compass is a trilingual (English/Spanish/Romanian) career guidance web application using the Holland RIASEC vocational test. Users can take the assessment anonymously or create accounts for premium features and result saving.
 
 ## Features
 
-- **RIASEC Personality Assessment**: 60-question career assessment based on Holland's theory
+- **RIASEC Vocational Assessment**: 60-question career assessment based on Holland's theory
 - **Social Authentication**: Google, Apple, Facebook login with Supabase Auth
 - **Trilingual Support**: Full UI and content in English, Spanish, and Romanian
 - **Anonymous Testing**: Take assessments without account creation

@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
 
             <h3 className="text-xl font-medium mb-3">2.2 Assessment Data</h3>
             <ul className="list-disc pl-6 mb-4">
-              <li>RIASEC personality test responses</li>
+              <li>RIASEC vocational test responses</li>
               <li>Career assessment results and recommendations</li>
               <li>Test completion dates and progress</li>
             </ul>

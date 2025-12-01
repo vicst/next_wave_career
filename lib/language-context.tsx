@@ -28,7 +28,7 @@ const translations = {
     // Homepage
     "home.title": "Discover Your Perfect Career Path",
     "home.subtitle":
-      "Take our comprehensive RIASEC personality test to uncover careers that align with your interests, skills, and personality. Get personalized recommendations for both traditional and future-ready jobs.",
+      "Take our comprehensive RIASEC vocational test to uncover careers that align with your interests. Get personalized recommendations for both traditional and future-ready jobs.",
     "home.cta.primary": "Start Your Career Assessment",
     "home.cta.secondary": "Learn More",
     "home.features.title": "Why Choose NextWave Careers?",
@@ -47,10 +47,10 @@ const translations = {
       "Answer 60 carefully crafted questions about your interests and preferences. The test takes about 10-15 minutes to complete.",
     "home.howItWorks.step2.title": "Get Your RIASEC Profile",
     "home.howItWorks.step2.desc":
-      "Receive your personalized personality profile showing your scores across Realistic, Investigative, Artistic, Social, Enterprising, and Conventional types.",
+      "Receive your personalized vocational profile showing your scores across Realistic, Investigative, Artistic, Social, Enterprising, and Conventional types.",
     "home.howItWorks.step3.title": "Explore Career Matches",
     "home.howItWorks.step3.desc":
-      "Discover careers that align with your personality, including salary ranges, education requirements, and future job outlook.",
+      "Discover careers that align with your interests, including education requirements and future job outlook.",
     "home.cta.final.title": "Ready to Find Your Career Path?",
     "home.cta.final.subtitle":
       "Join thousands of professionals who have discovered their ideal careers with NextWave Careers.",
@@ -61,7 +61,7 @@ const translations = {
     "dashboard.welcome": "Welcome back",
     "dashboard.assessment.title": "Assessment Status",
     "dashboard.assessment.lastCompleted": "Last completed:",
-    "dashboard.assessment.topType": "Top personality type:",
+    "dashboard.assessment.topType": "Top vocational type:",
     "dashboard.assessment.viewResults": "View Results",
     "dashboard.assessment.retakeTest": "Retake Test",
     "dashboard.assessment.notTaken": "You haven't taken the assessment yet.",
@@ -344,13 +344,13 @@ const translations = {
     // Homepage
     "home.title": "Descoperă-ți calea profesională perfectă",
     "home.subtitle":
-      "Fă testul nostru comprehensiv de personalitate RIASEC pentru a descoperi cariere care se aliniază cu interesele, abilitățile și personalitatea ta. Primește recomandări personalizate pentru joburi tradiționale și viitoare.",
-    "home.cta.primary": "Începe Evaluarea de Carieră",
-    "home.cta.secondary": "Află Mai Mult",
-    "home.features.title": "De Ce să Alegi NextWave Careers?",
-    "home.features.validated.title": "Validat Științific",
+      "Fă testul nostru vocational comprehensiv RIASEC pentru a descoperi cariere care se aliniază cu interesele tale. Primește recomandări personalizate pentru joburi tradiționale și viitoare.",
+    "home.cta.primary": "Începe evaluarea de carieră",
+    "home.cta.secondary": "Află mai mult",
+    "home.features.title": "De ce să alegi NextWave Careers?",
+    "home.features.validated.title": "Validat științific",
     "home.features.validated.desc":
-      "Bazat pe modelul RIASEC dovedit, folosit de consilierii de carieră din întreaga lume pentru a potrivi personalitățile cu căile de carieră potrivite.",
+      "Bazat pe modelul RIASEC dovedit, folosit de consilierii de carieră din întreaga lume pentru a potrivi interesele profesionale cu căile de carieră potrivite.",
     "home.features.future.title": "Perspective de Viitor",
     "home.features.future.desc":
       "Primește recomandări pentru cariere tradiționale și roluri emergente, incluzând analiza impactului AI și evaluarea riscului de automatizare.",
@@ -363,10 +363,10 @@ const translations = {
       "Răspunde la 60 de întrebări atent elaborate despre interesele și preferințele tale. Testul durează aproximativ 10-15 minute.",
     "home.howItWorks.step2.title": "Primește Profilul RIASEC",
     "home.howItWorks.step2.desc":
-      "Primește profilul tău personalizat de personalitate arătând scorurile tale pentru tipurile Realist, Investigativ, Artistic, Social, Întreprinzător și Convențional.",
+      "Primește profilul tău vocational arătând scorurile tale pentru tipurile Realist, Investigativ, Artistic, Social, Întreprinzător și Convențional.",
     "home.howItWorks.step3.title": "Explorează Potrivirile de Carieră",
     "home.howItWorks.step3.desc":
-      "Descoperă cariere care se aliniază cu personalitatea ta, incluzând intervalele salariale, cerințele educaționale și perspectivele viitoare ale jobului.",
+      "Descoperă cariere care se aliniază cu interesele tale, incluzând cerințele educaționale și perspectivele viitoare ale jobului.",
     "home.cta.final.title": "Gata să-ți Găsești Calea Profesională?",
     "home.cta.final.subtitle":
       "Alătură-te miilor de profesioniști care și-au descoperit carierele ideale cu NextWave Careers.",
@@ -377,7 +377,7 @@ const translations = {
     "dashboard.welcome": "Bun venit înapoi",
     "dashboard.assessment.title": "Starea Evaluării",
     "dashboard.assessment.lastCompleted": "Ultima completată:",
-    "dashboard.assessment.topType": "Tipul principal de personalitate:",
+    "dashboard.assessment.topType": "Tipul principal vocational:",
     "dashboard.assessment.viewResults": "Vezi Rezultatele",
     "dashboard.assessment.retakeTest": "Refă Testul",
     "dashboard.assessment.notTaken": "Nu ai făcut încă evaluarea.",
@@ -411,8 +411,8 @@ const translations = {
     "pricing.premium.popular": "Cel Mai Popular",
     "pricing.premium.active": "Activ",
     "pricing.premium.upgrade": "Actualizează la Premium",
-    "pricing.features.assessment": "Evaluare completă de personalitate RIASEC",
-    "pricing.features.profile": "Profil de bază de personalitate cu top 3 tipuri",
+    "pricing.features.assessment": "Evaluare completă vocațională RIASEC",
+    "pricing.features.profile": "Profil de bază vocațional cu top 3 tipuri",
     "pricing.features.traditional": "6 recomandări de cariere tradiționale",
     "pricing.features.future": "6 recomandări de cariere viitoare",
     "pricing.features.bilingual": "Suport Trilingüe (Engleză/Spaniolă/Rumână)",
