@@ -23,7 +23,7 @@ interface RiasecTestProps {
   user?: any
 }
 
-const QUESTIONS_PER_PAGE = 3
+const QUESTIONS_PER_PAGE = 4
 
 export default function RiasecTest({ user }: RiasecTestProps) {
   const { language, t } = useLanguage()
@@ -59,34 +59,21 @@ export default function RiasecTest({ user }: RiasecTestProps) {
   const startIndex = currentPage * QUESTIONS_PER_PAGE
   const endIndex = Math.min(startIndex + QUESTIONS_PER_PAGE, questions.length)
   const currentQuestions = questions.slice(startIndex, endIndex)
-  const answeredCount = Array.from(answers.keys()).length
-  const progress = (answeredCount / questions.length) * 100
 
-const getQuestionText = (question: Question) => {
-  if (language === "en") return question.question_text_en
-  if (language === "es") return question.question_text_es
-  if (language === "ro") return question.question_text_ro || question.question_text_en
-  return question.question_text_en
-}
-
-  const handleAnswerChange = (questionId: number, value: string) => {
-    const newAnswers = new Map(answers)
-    newAnswers.set(questionId, value)
-    setAnswers(newAnswers)
+  const getQuestionText = (question: Question) => {
+    if (language === "es") return question.question_text_es
+    if (language === "ro" && question.question_text_ro) return question.question_text_ro
+    return question.question_text_en
   }
 
-  const isPageComplete = () => {
-  return currentQuestions.every(q => answers.has(q.id))
+  const handleAnswerChange = (questionId: number, value: string) => {
+    setAnswers(new Map(answers.set(questionId, value)))
   }
 
   const handleNext = () => {
-    if (!isPageComplete()) return
-
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1)
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      }, 0)
+      window.scrollTo({ top: 0, behavior: "smooth" })
     } else {
       handleSubmitResults()
     }
@@ -95,11 +82,25 @@ const getQuestionText = (question: Question) => {
   const handlePrevious = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1)
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      }, 0)
+      window.scrollTo({ top: 0, behavior: "smooth" })
     }
   }
+
+  const isPageComplete = () => {
+    for (let i = startIndex; i < endIndex; i++) {
+      if (!answers.has(questions[i].id)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  const progress = () => {
+    if (questions.length === 0) return 0
+    const answeredCount = answers.size
+    return (answeredCount / questions.length) * 100
+  }
+
   const calculateRiasecScores = () => {
     const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 }
 
@@ -187,21 +188,21 @@ const getQuestionText = (question: Question) => {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-background py-4 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-6">
-          <p className="text-center text-sm text-muted-foreground mb-4">
+        <div className="mb-4">
+          <p className="text-center text-sm text-muted-foreground mb-2">
             {t("test.progress").replace("{start}", String(startIndex + 1)).replace("{end}", String(endIndex)).replace("{total}", String(questions.length))}
           </p>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress()} className="h-2" />
         </div>
 
-        <div className="space-y-6 mb-8">
+        <div className="space-y-2 mb-4">
           {currentQuestions.map((question, index) => (
             <Card key={question.id} className="border-2">
-              <CardContent className="pt-6">
-                <div className="mb-4">
-                  <h3 className="text-lg font-medium mb-4">
+              <CardContent className="pt-3 pb-3">
+                <div className="mb-2">
+                  <h3 className="text-base font-medium mb-2">
                     <span className="text-primary font-semibold mr-2">{startIndex + index + 1}.</span>
                     {getQuestionText(question)}
                   </h3>
@@ -210,35 +211,35 @@ const getQuestionText = (question: Question) => {
                   value={answers.get(question.id) || ""} 
                   onValueChange={(value) => handleAnswerChange(question.id, value)}
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
-                      <RadioGroupItem value="0" id={`q${question.id}-r1`} />
-                      <Label htmlFor={`q${question.id}-r1`} className="flex-1 cursor-pointer font-normal">
-                        {t("test.stronglyDisagree")}
+                  <div className="flex justify-start gap-4">
+                    <div className="flex flex-col items-center">
+                      <RadioGroupItem value="0" id={`q${question.id}-r1`} className="peer sr-only" />
+                      <Label htmlFor={`q${question.id}-r1`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                        😡
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
-                      <RadioGroupItem value="0.1" id={`q${question.id}-r2`} />
-                      <Label htmlFor={`q${question.id}-r2`} className="flex-1 cursor-pointer font-normal">
-                        {t("test.disagree")}
+                    <div className="flex flex-col items-center">
+                      <RadioGroupItem value="0.1" id={`q${question.id}-r2`} className="peer sr-only" />
+                      <Label htmlFor={`q${question.id}-r2`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                        😕
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
-                      <RadioGroupItem value="0.2" id={`q${question.id}-r3`} />
-                      <Label htmlFor={`q${question.id}-r3`} className="flex-1 cursor-pointer font-normal">
-                        {t("test.neutral")}
+                    <div className="flex flex-col items-center">
+                      <RadioGroupItem value="0.2" id={`q${question.id}-r3`} className="peer sr-only" />
+                      <Label htmlFor={`q${question.id}-r3`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                        😐
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
-                      <RadioGroupItem value="1" id={`q${question.id}-r4`} />
-                      <Label htmlFor={`q${question.id}-r4`} className="flex-1 cursor-pointer font-normal">
-                        {t("test.agree")}
+                    <div className="flex flex-col items-center">
+                      <RadioGroupItem value="1" id={`q${question.id}-r4`} className="peer sr-only" />
+                      <Label htmlFor={`q${question.id}-r4`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                        🙂
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors">
-                      <RadioGroupItem value="1.1" id={`q${question.id}-r5`} />
-                      <Label htmlFor={`q${question.id}-r5`} className="flex-1 cursor-pointer font-normal">
-                        {t("test.stronglyAgree")}
+                    <div className="flex flex-col items-center">
+                      <RadioGroupItem value="1.1" id={`q${question.id}-r5`} className="peer sr-only" />
+                      <Label htmlFor={`q${question.id}-r5`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                        😍
                       </Label>
                     </div>
                   </div>
