@@ -214,31 +214,31 @@ export default function RiasecTest({ user }: RiasecTestProps) {
                   <div className="flex justify-start gap-4">
                     <div className="flex flex-col items-center">
                       <RadioGroupItem value="0" id={`q${question.id}-r1`} className="peer sr-only" />
-                      <Label htmlFor={`q${question.id}-r1`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                      <Label htmlFor={`q${question.id}-r1`} className="text-2xl cursor-pointer hover:scale-150 transition-transform peer-data-[state=checked]:scale-125">
                         😡
                       </Label>
                     </div>
                     <div className="flex flex-col items-center">
                       <RadioGroupItem value="0.1" id={`q${question.id}-r2`} className="peer sr-only" />
-                      <Label htmlFor={`q${question.id}-r2`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                      <Label htmlFor={`q${question.id}-r2`} className="text-2xl cursor-pointer hover:scale-150 transition-transform peer-data-[state=checked]:scale-125">
                         😕
                       </Label>
                     </div>
                     <div className="flex flex-col items-center">
                       <RadioGroupItem value="0.2" id={`q${question.id}-r3`} className="peer sr-only" />
-                      <Label htmlFor={`q${question.id}-r3`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                      <Label htmlFor={`q${question.id}-r3`} className="text-2xl cursor-pointer hover:scale-150 transition-transform peer-data-[state=checked]:scale-125">
                         😐
                       </Label>
                     </div>
                     <div className="flex flex-col items-center">
                       <RadioGroupItem value="1" id={`q${question.id}-r4`} className="peer sr-only" />
-                      <Label htmlFor={`q${question.id}-r4`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                      <Label htmlFor={`q${question.id}-r4`} className="text-2xl cursor-pointer hover:scale-150 transition-transform peer-data-[state=checked]:scale-125">
                         🙂
                       </Label>
                     </div>
                     <div className="flex flex-col items-center">
                       <RadioGroupItem value="1.1" id={`q${question.id}-r5`} className="peer sr-only" />
-                      <Label htmlFor={`q${question.id}-r5`} className="text-2xl cursor-pointer hover:scale-110 transition-transform peer-data-[state=checked]:scale-125">
+                      <Label htmlFor={`q${question.id}-r5`} className="text-2xl cursor-pointer hover:scale-150 transition-transform peer-data-[state=checked]:scale-125">
                         😍
                       </Label>
                     </div>

@@ -7,7 +7,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Compass, Users, TrendingUp, Globe } from "lucide-react"
+import { Compass, Users, TrendingUp, Globe, Menu, X } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
 import LanguageToggle from "@/components/language-toggle"
 import { AuthModal } from "@/components/auth-modal"
@@ -19,6 +19,7 @@ export default function HomePage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -116,38 +117,93 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Compass className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-serif font-bold text-foreground">NextWave Careers</h1>
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Compass className="h-8 w-8 text-primary" />
+              <h1 className="text-xl md:text-2xl font-serif font-bold text-foreground">NextWave Careers</h1>
+            </div>
+
+            <div className="hidden md:flex items-center gap-4">
+              <LanguageToggle />
+              <Button variant="ghost" asChild>
+                <Link href="#about">{t("nav.about")}</Link>
+              </Button>
+              {user ? (
+                <div className="flex gap-2">
+                  <ProfileDropdown user={user} />
+                  <Button asChild>
+                    <Link href="/dashboard">{t("nav.dashboard")}</Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" asChild>
+                    <Link href="/auth/login">{t("nav.signIn")}</Link>
+                  </Button>
+                  <Button onClick={() => setShowAuthModal(true)}>{t("nav.getStarted")}</Button>
+                </div>
+              )}
+            </div>
+
+            <button
+              className="md:hidden p-2 hover:bg-accent rounded-md transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
-          <div className="flex items-center gap-4">
-            <LanguageToggle />
-            <Button variant="ghost" asChild>
-              <Link href="#about">{t("nav.about")}</Link>
-            </Button>
-            {user ? (
-              <div className="flex gap-2">
-                <ProfileDropdown user={user} />
-                <Button asChild>
-                  <Link href="/dashboard">{t("nav.dashboard")}</Link>
-                </Button>
+
+          {mobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 space-y-3 border-t border-border pt-4">
+              <Button variant="ghost" className="w-full justify-center" asChild>
+                <Link href="#about" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav.about")}
+                </Link>
+              </Button>
+              {user ? (
+                <>
+                  <div className="flex justify-center">
+                    <ProfileDropdown user={user} />
+                  </div>
+                  <Button className="w-full" asChild>
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                      {t("nav.dashboard")}
+                    </Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    asChild
+                  >
+                    <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                      {t("nav.signIn")}
+                    </Link>
+                  </Button>
+                  <Button
+                    className="w-full"
+                    onClick={() => {
+                      setShowAuthModal(true)
+                      setMobileMenuOpen(false)
+                    }}
+                  >
+                    {t("nav.getStarted")}
+                  </Button>
+                </>
+              )}
+              <div className="pt-2 border-t border-border flex justify-center">
+                <LanguageToggle />
               </div>
-            ) : (
-              <div className="flex gap-2">
-                <Button variant="outline" asChild>
-                  <Link href="/auth/login">{t("nav.signIn")}</Link>
-                </Button>
-                <Button onClick={() => setShowAuthModal(true)}>{t("nav.getStarted")}</Button>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto text-center max-w-4xl">
           <h2 className="text-5xl font-serif font-bold text-foreground mb-6">{t("home.title")}</h2>
@@ -163,7 +219,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section id="about" className="py-16 px-4 bg-card">
         <div className="container mx-auto max-w-6xl">
           <h3 className="text-3xl font-serif font-bold text-center text-foreground mb-12">
@@ -203,15 +258,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section id="how-it-works" className="py-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <h3 className="text-3xl font-serif font-bold text-center text-foreground mb-12">
             {t("home.howItWorks.title")}
           </h3>
           <div className="space-y-8">
-            <div className="flex items-start gap-6">
-              <div className="bg-primary text-primary-foreground rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl">
                 1
               </div>
               <div>
@@ -222,8 +276,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-start gap-6">
-              <div className="bg-primary text-primary-foreground rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl">
                 2
               </div>
               <div>
@@ -234,8 +288,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-start gap-6">
-              <div className="bg-primary text-primary-foreground rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl">
                 3
               </div>
               <div>
@@ -249,30 +303,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-4 bg-primary text-primary-foreground">
-        <div className="container mx-auto text-center max-w-3xl">
-          <h3 className="text-3xl font-serif font-bold mb-6">{t("home.cta.final.title")}</h3>
-          <p className="text-xl mb-8 opacity-90">{t("home.cta.final.subtitle")}</p>
-          <Button size="lg" variant="secondary" className="text-lg px-8 py-6" asChild>
-            <Link href="/test">{t("home.cta.final.button")}</Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border bg-card">
-        <div className="container mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Compass className="h-6 w-6 text-primary" />
-            <span className="font-serif font-bold text-foreground">NextWave Careers</span>
-          </div>
-          <p className="text-muted-foreground">{t("home.footer.tagline")}</p>
-        </div>
-      </footer>
-
-      {/* Auth Modal */}
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
     </div>
   )
 }
