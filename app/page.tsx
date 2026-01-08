@@ -137,8 +137,8 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowAuthModal(true)}>
-                  {t("nav.signIn")}
+                <Button variant="outline" asChild>
+                  <Link href="/auth/login">{t("nav.signIn")}</Link>
                 </Button>
                 <Button onClick={() => setShowAuthModal(true)}>{t("nav.getStarted")}</Button>
               </div>
