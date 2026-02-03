@@ -1,5 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
+/**
+ * RIASEC Scores Interface
+ * Scor maxim per categorie: 40 puncte (conform formulei O*NET)
+ * Formula: Math.max(Number(answerValue) - 1, 0)
+ * 10 întrebări × 4 puncte maxim = 40 puncte per categorie
+ */
 interface RIASECScores {
   R: number;
   I: number;
@@ -36,6 +42,10 @@ interface CareerMatch {
   matchScore: number;
   matchingCodes: string[];
 }
+
+// Scor maxim per categorie RIASEC conform O*NET
+// 10 întrebări × 4 puncte maxim (răspuns 5 convertit la 4) = 40 puncte
+const MAX_SCORE_PER_CATEGORY = 40;
 
 const RIASEC_DESCRIPTIONS_RO = {
   R: {
@@ -155,17 +165,21 @@ export class PDFGenerator {
       })
       .join('');
 
+    // MODIFICAT: Folosește MAX_SCORE_PER_CATEGORY (40) în loc de 50
+    // Conform formulei O*NET: 10 întrebări × 4 puncte maxim = 40 puncte per categorie
     const scoresHTML = Object.entries(profile.riasecScores)
       .sort(([, a], [, b]) => b - a)
       .map(([code, score]) => {
         const typeInfo = RIASEC_DESCRIPTIONS_RO[code as keyof typeof RIASEC_DESCRIPTIONS_RO];
+        // Calculăm procentul bazat pe scorul maxim O*NET (40)
+        const percentage = (score / MAX_SCORE_PER_CATEGORY) * 100;
         return `
           <div class="score-item">
             <div class="score-label">${code} - ${typeInfo.name}</div>
             <div class="score-bar-container">
-              <div class="score-bar" style="width: ${(score / 50) * 100}%"></div>
+              <div class="score-bar" style="width: ${Math.min(percentage, 100)}%"></div>
             </div>
-            <div class="score-value">${score}/50</div>
+            <div class="score-value">${score}/${MAX_SCORE_PER_CATEGORY}</div>
           </div>
         `;
       })
