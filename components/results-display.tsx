@@ -10,7 +10,9 @@ import { Compass, Download, Share2, Star, TrendingUp, AlertTriangle, UserPlus } 
 import { supabase } from "@/lib/supabase/client"
 import Link from "next/link"
 import RiasecChart from "@/components/riasec-chart"
-import { PDFDownloadButton } from '@/components/pdf-download-button';
+import { PDFDownloadButton } from '@/components/pdf-download-button'
+import { ONetCareerMatcher } from "@/lib/career-matcher-onet"
+import type { Job, MatchedJob } from "@/lib/types"
 
 interface TestResults {
   id?: number
@@ -21,7 +23,7 @@ interface TestResults {
   is_anonymous?: boolean
 }
 
-interface Job {
+interface SupabaseJob {
   id: number
   job_title_en: string
   job_title_es: string
@@ -35,6 +37,12 @@ interface Job {
   automation_risk?: string
   future_demand?: string
   required_skills?: string[]
+}
+
+interface MatchedSupabaseJob extends SupabaseJob {
+  matchLevel: string
+  percentScore: number
+  correlation: number
 }
 
 interface ResultsDisplayProps {
@@ -109,47 +117,96 @@ const RIASEC_DESCRIPTIONS = {
   },
 }
 
+/**
+ * Convertește un cod RIASEC de 3 litere (ex: "RIE") la un array de 6 scoruri.
+ * Literele prezente primesc scoruri 3, 2, 1 în ordinea apariției.
+ * Restul primesc 0.
+ */
+function riasecCodeToProfile(code: string): number[] {
+  const dimensions = ['R', 'I', 'A', 'S', 'E', 'C']
+  const profile = [0, 0, 0, 0, 0, 0]
+  const letters = code.toUpperCase().split('')
+  const scores = [3, 2, 1]
+  letters.forEach((letter, idx) => {
+    const dimIdx = dimensions.indexOf(letter)
+    if (dimIdx !== -1 && idx < 3) {
+      profile[dimIdx] = scores[idx]
+    }
+  })
+  return profile
+}
+
+/**
+ * Convertește meseriile din formatul Supabase la formatul Job cerut de ONetCareerMatcher
+ */
+function supabaseJobToONetJob(job: SupabaseJob, category: 'traditional' | 'future'): Job {
+  return {
+    id: String(job.id),
+    name: job.job_title_en,
+    description: job.description_en,
+    riasec_profile: riasecCodeToProfile(job.riasec_code),
+    category,
+    salary_range: job.salary_range,
+    education: job.education_level,
+    growth_outlook: job.growth_outlook as any,
+  }
+}
+
+/**
+ * Combină rezultatele matcher-ului cu datele originale din Supabase
+ */
+function mergeMatchedWithSupabase(
+  matches: MatchedJob[],
+  supabaseJobs: SupabaseJob[]
+): MatchedSupabaseJob[] {
+  return matches.map((match) => {
+    const original = supabaseJobs.find((j) => String(j.id) === match.job.id)!
+    return {
+      ...original,
+      matchLevel: match.matchLevel,
+      percentScore: match.percentScore,
+      correlation: match.correlation,
+    }
+  })
+}
+
 export default function ResultsDisplay({ testResults, user }: ResultsDisplayProps) {
   const [language, setLanguage] = useState<"en" | "es">("en")
-  const [traditionalJobs, setTraditionalJobs] = useState<Job[]>([])
-  const [futureJobs, setFutureJobs] = useState<Job[]>([])
+  const [traditionalJobs, setTraditionalJobs] = useState<MatchedSupabaseJob[]>([])
+  const [futureJobs, setFutureJobs] = useState<MatchedSupabaseJob[]>([])
   const [loading, setLoading] = useState(true)
 
   const { riasec_scores, top_personality_types, is_premium, is_anonymous } = testResults
 
-  // Load job recommendations
   useEffect(() => {
     async function loadJobs() {
       try {
-        // Get jobs that match user's top vocational types
-        const riasecPattern = top_personality_types.join("|")
-
         const jobLimit = user && is_premium ? 20 : user ? 10 : 6
 
-        // Load traditional jobs
-        const { data: traditionalData, error: traditionalError } = await supabase
-          .from("jobs_traditional")
-          .select("*")
-          .or(`riasec_code.ilike.%${top_personality_types[0]}%,riasec_code.ilike.%${top_personality_types[1]}%`)
-          .limit(jobLimit)
+        // Fetch toate meseriile (fără filtrare după riasec_code)
+        const [{ data: traditionalData, error: traditionalError }, { data: futureData, error: futureError }] =
+          await Promise.all([
+            supabase.from("jobs_traditional").select("*"),
+            supabase.from("jobs_future").select("*"),
+          ])
 
-        if (traditionalError) {
-          console.error("Error loading traditional jobs:", traditionalError)
-        } else {
-          setTraditionalJobs(traditionalData || [])
+        if (traditionalError) console.error("Error loading traditional jobs:", traditionalError)
+        if (futureError) console.error("Error loading future jobs:", futureError)
+
+        // Matching O*NET pentru Traditional Jobs
+        if (traditionalData && traditionalData.length > 0) {
+          const onetJobs = traditionalData.map((j: SupabaseJob) => supabaseJobToONetJob(j, 'traditional'))
+          const matcher = new ONetCareerMatcher(onetJobs)
+          const results = matcher.matchCareers(riasec_scores, { limit: jobLimit })
+          setTraditionalJobs(mergeMatchedWithSupabase(results.matches, traditionalData))
         }
 
-        // Load future jobs
-        const { data: futureData, error: futureError } = await supabase
-          .from("jobs_future")
-          .select("*")
-          .or(`riasec_code.ilike.%${top_personality_types[0]}%,riasec_code.ilike.%${top_personality_types[1]}%`)
-          .limit(jobLimit)
-
-        if (futureError) {
-          console.error("Error loading future jobs:", futureError)
-        } else {
-          setFutureJobs(futureData || [])
+        // Matching O*NET pentru Future Jobs
+        if (futureData && futureData.length > 0) {
+          const onetJobs = futureData.map((j: SupabaseJob) => supabaseJobToONetJob(j, 'future'))
+          const matcher = new ONetCareerMatcher(onetJobs)
+          const results = matcher.matchCareers(riasec_scores, { limit: jobLimit })
+          setFutureJobs(mergeMatchedWithSupabase(results.matches, futureData))
         }
       } catch (error) {
         console.error("Error:", error)
@@ -159,7 +216,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
     }
 
     loadJobs()
-  }, [top_personality_types, is_premium, user])
+  }, [riasec_scores, is_premium, user])
 
   const getPersonalityDescription = (type: string) => {
     return RIASEC_DESCRIPTIONS[language][type as keyof typeof RIASEC_DESCRIPTIONS.en]
@@ -167,29 +224,29 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
 
   const getRiskBadgeColor = (risk: string) => {
     switch (risk) {
-      case "Low":
-        return "bg-green-100 text-green-800"
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800"
-      case "High":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
+      case "Low": return "bg-green-100 text-green-800"
+      case "Medium": return "bg-yellow-100 text-yellow-800"
+      case "High": return "bg-red-100 text-red-800"
+      default: return "bg-gray-100 text-gray-800"
     }
   }
 
   const getDemandBadgeColor = (demand: string) => {
     switch (demand) {
-      case "High Growth":
-        return "bg-green-100 text-green-800"
-      case "Growing":
-        return "bg-blue-100 text-blue-800"
-      case "Stable":
-        return "bg-gray-100 text-gray-800"
-      case "Declining":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
+      case "High Growth": return "bg-green-100 text-green-800"
+      case "Growing": return "bg-blue-100 text-blue-800"
+      case "Stable": return "bg-gray-100 text-gray-800"
+      case "Declining": return "bg-red-100 text-red-800"
+      default: return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const getMatchBadgeColor = (matchLevel: string) => {
+    switch (matchLevel) {
+      case "best": return "bg-green-100 text-green-800"
+      case "good": return "bg-blue-100 text-blue-800"
+      case "okay": return "bg-yellow-100 text-yellow-800"
+      default: return "bg-gray-100 text-gray-800"
     }
   }
 
@@ -295,7 +352,7 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
                   {top_personality_types.slice(0, 3).filter(type => riasec_scores[type as keyof typeof riasec_scores] > 0).map((type, index) => {
                     const description = getPersonalityDescription(type)
                     const score = riasec_scores[type as keyof typeof riasec_scores]
-                    const percentage = Math.round((score / 50) * 100) // Assuming max score is 50
+                    const percentage = Math.round((score / 50) * 100)
 
                     return (
                       <div key={type} className="border rounded-lg p-4">
@@ -334,8 +391,8 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
             </CardTitle>
             <CardDescription>
               {language === "en"
-                ? "Careers that align with your vocational profile"
-                : "Carreras que se alinean con tu perfil de personalidad"}
+                ? "Careers ranked by O*NET Pearson correlation with your RIASEC profile"
+                : "Carreras clasificadas por correlación O*NET Pearson con tu perfil RIASEC"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -369,6 +426,9 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
                               </CardTitle>
                               <div className="flex items-center gap-2 mt-2">
                                 <Badge variant="outline">{job.riasec_code}</Badge>
+                                <Badge className={getMatchBadgeColor(job.matchLevel)}>
+                                  {job.matchLevel} · {job.percentScore}%
+                                </Badge>
                                 {job.growth_outlook && (
                                   <Badge className={getDemandBadgeColor(job.growth_outlook)}>
                                     {job.growth_outlook}
@@ -463,6 +523,9 @@ export default function ResultsDisplay({ testResults, user }: ResultsDisplayProp
                               </CardTitle>
                               <div className="flex items-center gap-2 mt-2">
                                 <Badge variant="outline">{job.riasec_code}</Badge>
+                                <Badge className={getMatchBadgeColor(job.matchLevel)}>
+                                  {job.matchLevel} · {job.percentScore}%
+                                </Badge>
                                 {job.future_demand && (
                                   <Badge className={getDemandBadgeColor(job.future_demand)}>
                                     <TrendingUp className="h-3 w-3 mr-1" />
