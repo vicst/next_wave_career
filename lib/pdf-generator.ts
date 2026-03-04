@@ -26,8 +26,12 @@ interface UserProfile {
 interface Job {
   id: number;
   job_title_ro: string;
+  job_title_en?: string;
   description_ro: string;
-  riasec_code: string;
+  description_en?: string;
+  onet_code?: string;
+  riasec_code?: string;
+  riasec_profile?: number[];  // Array [R, I, A, S, E, C] - format O*NET
   salary_range?: string;
   education_level?: string;
   growth_outlook?: string;
@@ -80,69 +84,155 @@ const RIASEC_DESCRIPTIONS_RO = {
   }
 };
 
+/**
+ * Algoritm O*NET Career Matcher
+ * Folosește corelația Pearson cu normalizare z-score pentru matching precis
+ */
 export class CareerMatcher {
-  static calculateMatchScore(userTopTypes: string[], jobCode: string): number {
-    let score = 0;
-    const jobCodes = jobCode.split('');
+  /**
+   * Normalizează un array de scoruri folosind z-score
+   * z = (x - mean) / stdDev
+   */
+  private static normalizeScores(scores: number[]): number[] {
+    const n = scores.length;
+    if (n === 0) return [];
+    
+    const mean = scores.reduce((a, b) => a + b, 0) / n;
+    const variance = scores.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
+    const stdDev = Math.sqrt(variance);
+    
+    // Dacă deviația standard e 0, returnăm array de zerouri
+    if (stdDev === 0) return scores.map(() => 0);
+    
+    return scores.map(score => (score - mean) / stdDev);
+  }
 
-    for (let i = 0; i < userTopTypes.length && i < 3; i++) {
-      const userType = userTopTypes[i];
-      const jobIndex = jobCodes.indexOf(userType);
-
-      if (jobIndex !== -1) {
-        const positionWeight = 1 / (i + 1);
-        const jobPositionWeight = 1 / (jobIndex + 1);
-        score += (positionWeight + jobPositionWeight) * 50;
-      }
+  /**
+   * Calculează corelația Pearson între două profile RIASEC
+   * Returnează valoare între -1 și 1
+   */
+  private static calculatePearsonCorrelation(profile1: number[], profile2: number[]): number {
+    if (profile1.length !== profile2.length || profile1.length === 0) {
+      return 0;
     }
-
-    return Math.round(score);
+    
+    const n = profile1.length;
+    const mean1 = profile1.reduce((a, b) => a + b, 0) / n;
+    const mean2 = profile2.reduce((a, b) => a + b, 0) / n;
+    
+    let numerator = 0;
+    let sumSq1 = 0;
+    let sumSq2 = 0;
+    
+    for (let i = 0; i < n; i++) {
+      const dev1 = profile1[i] - mean1;
+      const dev2 = profile2[i] - mean2;
+      numerator += dev1 * dev2;
+      sumSq1 += dev1 * dev1;
+      sumSq2 += dev2 * dev2;
+    }
+    
+    const denominator = Math.sqrt(sumSq1 * sumSq2);
+    if (denominator === 0) return 0;
+    
+    return Math.max(-1, Math.min(1, numerator / denominator));
   }
 
-  static getMatchingCodes(userTopTypes: string[], jobCode: string): string[] {
-    const jobCodes = jobCode.split('');
-    return userTopTypes.filter(type => jobCodes.includes(type));
+  /**
+   * Calculează scorul de potrivire O*NET (0-100)
+   * Folosește corelația Pearson între profile normalizate
+   */
+  static calculateMatchScore(userScores: RIASECScores, jobProfile: number[]): number {
+    // Convertim scorurile utilizatorului în array [R, I, A, S, E, C]
+    const userArray = [
+      userScores.R, userScores.I, userScores.A,
+      userScores.S, userScores.E, userScores.C
+    ];
+    
+    // Normalizăm ambele profile
+    const normalizedUser = this.normalizeScores(userArray);
+    const normalizedJob = this.normalizeScores(jobProfile);
+    
+    // Calculăm corelația Pearson
+    const correlation = this.calculatePearsonCorrelation(normalizedUser, normalizedJob);
+    
+    // Convertim corelația (-1 la 1) în scor procentual (0 la 100)
+    // Formula: (correlation + 1) / 2 * 100
+    return Math.round((correlation + 1) / 2 * 100);
   }
 
+  /**
+   * Determină codul RIASEC din profilul array
+   * Returnează primele 3 tipuri dominante
+   */
+  static getMatchingCodes(userScores: RIASECScores, jobProfile: number[]): string[] {
+    const types = ['R', 'I', 'A', 'S', 'E', 'C'];
+    
+    // Găsim indicii sortați descrescător pentru job
+    const indexed = jobProfile.map((score, idx) => ({ score, type: types[idx] }));
+    indexed.sort((a, b) => b.score - a.score);
+    
+    // Returnăm primele 3 tipuri dominante ale job-ului
+    return indexed.slice(0, 3).map(item => item.type);
+  }
+
+  /**
+   * Funcția principală de matching - folosește jobs_onet cu algoritm O*NET
+   */
   static async matchJobs(profile: UserProfile, supabaseUrl: string, supabaseKey: string): Promise<CareerMatch[]> {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const matches: CareerMatch[] = [];
 
-    const traditionalQuery = supabase
-      .from('jobs_traditional')
-      .select('*')
-      .or(`riasec_code.ilike.%${profile.topTypes[0]}%,riasec_code.ilike.%${profile.topTypes[1]}%`)
-      .limit(30);
+    // Query către tabela jobs_onet care conține 923 meserii
+    const { data: jobs, error } = await supabase
+      .from('jobs_onet')
+      .select('id, job_title_ro, job_title_en, description_ro, description_en, onet_code, riasec_profile, salary_range, education_level, growth_outlook, ai_impact_level, automation_risk, future_demand');
 
-    const futureQuery = supabase
-      .from('jobs_future')
-      .select('*')
-      .or(`riasec_code.ilike.%${profile.topTypes[0]}%,riasec_code.ilike.%${profile.topTypes[1]}%`)
-      .limit(30);
+    if (error) {
+      console.error('Eroare la încărcarea job-urilor O*NET:', error);
+      return [];
+    }
 
-    const [traditionalResult, futureResult] = await Promise.all([
-      traditionalQuery,
-      futureQuery
-    ]);
+    if (!jobs || jobs.length === 0) {
+      console.warn('Nu s-au găsit job-uri în tabela jobs_onet');
+      return [];
+    }
 
-    const allJobs = [
-      ...(traditionalResult.data || []),
-      ...(futureResult.data || [])
-    ];
+    // Calculăm matching pentru fiecare job
+    for (const job of jobs) {
+      // Verificăm că job-ul are profil RIASEC valid
+      if (!job.riasec_profile || !Array.isArray(job.riasec_profile) || job.riasec_profile.length !== 6) {
+        continue;
+      }
 
-    for (const job of allJobs) {
-      const matchScore = this.calculateMatchScore(profile.topTypes, job.riasec_code);
-      const matchingCodes = this.getMatchingCodes(profile.topTypes, job.riasec_code);
+      const matchScore = this.calculateMatchScore(profile.riasecScores, job.riasec_profile);
+      const matchingCodes = this.getMatchingCodes(profile.riasecScores, job.riasec_profile);
 
-      if (matchScore > 0) {
+      // Includem doar job-urile cu scor > 50 (corelație pozitivă)
+      if (matchScore > 50) {
         matches.push({
-          job,
+          job: {
+            id: job.id,
+            job_title_ro: job.job_title_ro,
+            job_title_en: job.job_title_en,
+            description_ro: job.description_ro,
+            description_en: job.description_en,
+            onet_code: job.onet_code,
+            riasec_profile: job.riasec_profile,
+            salary_range: job.salary_range,
+            education_level: job.education_level,
+            growth_outlook: job.growth_outlook,
+            ai_impact_level: job.ai_impact_level,
+            automation_risk: job.automation_risk,
+            future_demand: job.future_demand
+          },
           matchScore,
           matchingCodes
         });
       }
     }
 
+    // Sortăm descrescător și returnăm top 20
     return matches.sort((a, b) => b.matchScore - a.matchScore).slice(0, 20);
   }
 }
