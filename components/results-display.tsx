@@ -12,6 +12,7 @@ import Link from "next/link"
 import RiasecChart from "@/components/riasec-chart"
 import { PDFDownloadButton } from '@/components/pdf-download-button'
 import { ONetCareerMatcher } from "@/lib/career-matcher-onet"
+import { riasecCodeToProfile } from "@/lib/riasec-utils"
 import type { Job, MatchedJob } from "@/lib/types"
 
 interface TestResults {
@@ -115,25 +116,6 @@ const RIASEC_DESCRIPTIONS = {
       traits: ["Organizado", "Eficiente", "Práctico", "Cuidadoso", "Sistemático"],
     },
   },
-}
-
-/**
- * Convertește un cod RIASEC de 3 litere (ex: "RIE") la un array de 6 scoruri.
- * Literele prezente primesc scoruri 3, 2, 1 în ordinea apariției.
- * Restul primesc 0.
- */
-function riasecCodeToProfile(code: string): number[] {
-  const dimensions = ['R', 'I', 'A', 'S', 'E', 'C']
-  const profile = [0, 0, 0, 0, 0, 0]
-  const letters = code.toUpperCase().split('')
-  const scores = [3, 2, 1]
-  letters.forEach((letter, idx) => {
-    const dimIdx = dimensions.indexOf(letter)
-    if (dimIdx !== -1 && idx < 3) {
-      profile[dimIdx] = scores[idx]
-    }
-  })
-  return profile
 }
 
 /**
